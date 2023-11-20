@@ -1,7 +1,7 @@
 [versions]
 aboutLibs = "10.7.0"
 accompanist = "0.32.0"
-agp = "8.1.0"
+agp = "8.1.4"
 android-material = "1.10.0"
 androidx-activity-compose = "1.8.0"
 androidx-appcompat = "1.6.1"
