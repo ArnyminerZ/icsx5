@@ -15,7 +15,7 @@ androidx-swiperefreshlayout = "1.1.0"
 androidx-test = "1.5.2"
 androidx-work = "2.8.1"
 bitfire-cert4android = "3817e62d9f173d8f8b800d24769f42cb205f560e"
-bitfire-ical4android = "b682476"
+bitfire-ical4android = "916f2228e8fb55d26dea171733feaf22d6e45594"
 #noinspection GradleDependency
 commons-io = "2.6"
 #noinspection GradleDependency
