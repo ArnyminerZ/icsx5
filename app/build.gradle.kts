@@ -1,11 +1,10 @@
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("com.mikepenz.aboutlibraries.plugin")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.aboutLibs)
+    alias(libs.plugins.android)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.ksp)
 }
 
 android {
