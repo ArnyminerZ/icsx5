@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "at.bitfire.icsdroid"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 33
 
         versionCode = 73
         versionName = "2.2-beta.1"
