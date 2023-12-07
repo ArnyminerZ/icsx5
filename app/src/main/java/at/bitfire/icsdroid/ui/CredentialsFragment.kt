@@ -19,6 +19,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -147,9 +149,9 @@ fun PasswordTextField(
         trailingIcon = {
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 if (passwordVisible)
-                    Icon(painterResource(R.drawable.visibility_off), stringResource(R.string.add_calendar_password_hide))
+                    Icon(Icons.Rounded.VisibilityOff, stringResource(R.string.add_calendar_password_hide))
                 else
-                    Icon(painterResource(R.drawable.visibility_on), stringResource(R.string.add_calendar_password_show))
+                    Icon(Icons.Rounded.Visibility, stringResource(R.string.add_calendar_password_show))
             }
         },
         modifier = Modifier.fillMaxWidth()
