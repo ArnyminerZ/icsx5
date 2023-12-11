@@ -111,17 +111,13 @@ fun LoginCredentialsComposable(
                 value = username,
                 onValueChange = onUsernameChange,
                 label = { Text( stringResource(R.string.add_calendar_user_name)) },
-                isError = false,
                 singleLine = true,
-                enabled = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
             PasswordTextField(
                 password = password,
                 labelText = stringResource(R.string.add_calendar_password),
-                enabled = true,
-                isError = false,
                 onPasswordChange = onPasswordChange
             )
         }
@@ -131,9 +127,9 @@ fun LoginCredentialsComposable(
 @Composable
 fun PasswordTextField(
     password: String,
-    labelText: String,
-    enabled: Boolean,
-    isError: Boolean,
+    labelText: String = "",
+    enabled: Boolean = true,
+    isError: Boolean = false,
     onPasswordChange: (String) -> Unit
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
