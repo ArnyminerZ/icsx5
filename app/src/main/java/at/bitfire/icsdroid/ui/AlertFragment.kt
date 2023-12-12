@@ -6,6 +6,13 @@ package at.bitfire.icsdroid.ui
 
 import android.app.Dialog
 import android.os.Bundle
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.DialogFragment
 import at.bitfire.icsdroid.R
@@ -34,25 +41,58 @@ class AlertFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = requireArguments()
         val message = args.getString(ARG_MESSAGE).orEmpty()
-        val dialog = MaterialAlertDialogBuilder(requireActivity())
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok) { _, _ -> }
-                .setNeutralButton(R.string.alert_share_details) { _, _ ->
+        val throwable = args.getSerializable(ARG_THROWABLE) as? Throwable
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(
+            ComposeView(requireContext()).apply {
+                setContent {
+                    AlertFragmentDialog(message, throwable) { dismiss() }
+                }
+            }
+        )
+
+        return dialog
+    }
+
+}
+
+@Composable
+fun AlertFragmentDialog(
+    message: String,
+    throwable: Throwable? = null,
+    onDismissRequest: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        text = { Text(message) },
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
                     val details = StringWriter()
                     details.append(message)
 
-                    (args.getSerializable(ARG_THROWABLE) as? Throwable)?.let { ex ->
+                    if (throwable != null) {
                         details.append("\n\n")
-                        ex.printStackTrace(PrintWriter(details))
+                        throwable.printStackTrace(PrintWriter(details))
                     }
 
-                    val share = ShareCompat.IntentBuilder(requireActivity())
-                            .setType("text/plain")
-                            .setText(details.toString())
-                            .createChooserIntent()
-                    startActivity(share)
+                    val share = ShareCompat.IntentBuilder(context)
+                        .setType("text/plain")
+                        .setText(details.toString())
+                        .createChooserIntent()
+                    context.startActivity(share)
                 }
-        return dialog.create()
-    }
-
+            ) {
+                Text(stringResource(R.string.alert_share_details))
+            }
+        }
+    )
 }
