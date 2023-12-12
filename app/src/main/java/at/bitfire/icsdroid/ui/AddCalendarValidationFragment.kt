@@ -10,6 +10,15 @@ import android.app.ProgressDialog
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -81,10 +90,23 @@ class AddCalendarValidationFragment: DialogFragment() {
         })
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val progress = ProgressDialog(activity)
-        progress.setMessage(getString(R.string.add_calendar_validating))
-        return progress
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = Dialog(requireContext()).apply {
+        setContentView(
+            ComposeView(requireContext()).apply {
+                setContent {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator()
+
+                        Text(
+                            text = stringResource(R.string.add_calendar_validating),
+                            modifier = Modifier.weight(1f).padding(start = 12.dp)
+                        )
+                    }
+                }
+            }
+        )
     }
 
     override fun onPause() {
