@@ -83,8 +83,8 @@ class CredentialsFragment: Fragment() {
 @Composable
 fun LoginCredentialsComposable(
     requiresAuth: Boolean,
-    username: String,
-    password: String,
+    username: String?,
+    password: String?,
     onRequiresAuthChange: (Boolean) -> Unit,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
@@ -108,7 +108,7 @@ fun LoginCredentialsComposable(
         }
         if (requiresAuth) {
             OutlinedTextField(
-                value = username,
+                value = username ?: "",
                 onValueChange = onUsernameChange,
                 label = { Text( stringResource(R.string.add_calendar_user_name)) },
                 singleLine = true,
@@ -116,7 +116,7 @@ fun LoginCredentialsComposable(
                 modifier = Modifier.fillMaxWidth()
             )
             PasswordTextField(
-                password = password,
+                password = password ?: "",
                 labelText = stringResource(R.string.add_calendar_password),
                 onPasswordChange = onPasswordChange
             )
