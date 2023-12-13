@@ -9,6 +9,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
 import at.bitfire.ical4android.Css3Color
 import at.bitfire.icsdroid.HttpUtils.toAndroidUri
+import at.bitfire.icsdroid.ui.viewmodel.ValidationModel
+import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.AfterClass
@@ -96,15 +98,13 @@ class AddCalendarValidationFragmentTest {
     private fun validate(iCal: String): ResourceInfo {
         server.enqueue(MockResponse().setBody(iCal))
 
-        val model = AddCalendarValidationFragment.ValidationModel(app, server.url("/").toAndroidUri(), null, null)
-        // wait for result
-        var result: ResourceInfo? = null
-        while (result == null) {
-            result = model.result.value
-            Thread.sleep(50)
+        val model = ValidationModel(app)
+        runBlocking {
+            // Wait until the validation completed
+            model.validate(server.url("/").toAndroidUri(), null, null).join()
         }
 
-        return result
+        return model.result.value!!
     }
 
 }

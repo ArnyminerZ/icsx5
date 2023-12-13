@@ -19,9 +19,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import at.bitfire.icsdroid.Constants
+import at.bitfire.icsdroid.HttpClient
 import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.databinding.AddCalendarEnterUrlBinding
+import at.bitfire.icsdroid.ui.viewmodel.ValidationModel
 import java.net.URI
 import java.net.URISyntaxException
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -30,7 +32,10 @@ class AddCalendarEnterUrlFragment: Fragment() {
 
     private val subscriptionSettingsModel by activityViewModels<SubscriptionSettingsFragment.SubscriptionSettingsModel>()
     private val credentialsModel by activityViewModels<CredentialsFragment.CredentialsModel>()
+    private val validationModel by activityViewModels<ValidationModel>()
     private lateinit var binding: AddCalendarEnterUrlBinding
+
+    private var menu: Menu? = null
 
     private val pickFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         if (uri != null) {
@@ -54,6 +59,36 @@ class AddCalendarEnterUrlFragment: Fragment() {
             it.observe(viewLifecycleOwner, invalidate)
         }
 
+        validationModel.isVerifyingUrl.observe(viewLifecycleOwner) { isVerifyingUrl ->
+            menu?.findItem(R.id.next)?.isEnabled = !isVerifyingUrl
+            binding.urlEdit.isEnabled = !isVerifyingUrl
+            binding.pickStorageFile.isEnabled = !isVerifyingUrl
+        }
+
+        validationModel.result.observe(viewLifecycleOwner) { info ->
+            val exception = info.exception
+            if (exception == null) {
+                subscriptionSettingsModel.url.value = info.uri.toString()
+
+                if (subscriptionSettingsModel.color.value == null)
+                    subscriptionSettingsModel.color.value =
+                        info.calendarColor ?: resources.getColor(R.color.lightblue)
+
+                if (subscriptionSettingsModel.title.value.isNullOrBlank())
+                    subscriptionSettingsModel.title.value = info.calendarName ?: info.uri.toString()
+
+                parentFragmentManager
+                    .beginTransaction()
+                    .replace(android.R.id.content, AddCalendarDetailsFragment())
+                    .addToBackStack(null)
+                    .commitAllowingStateLoss()
+            } else {
+                val errorMessage =
+                    exception.localizedMessage ?: exception.message ?: exception.toString()
+                AlertFragment.create(errorMessage, exception).show(parentFragmentManager, null)
+            }
+        }
+
         binding = AddCalendarEnterUrlBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.model = subscriptionSettingsModel
@@ -71,7 +106,7 @@ class AddCalendarEnterUrlFragment: Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.enter_url_fragment, menu)
+        inflater.inflate(R.menu.enter_url_fragment, menu).also { this.menu = menu }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -85,6 +120,16 @@ class AddCalendarEnterUrlFragment: Fragment() {
             else
                 true
         itemNext.isEnabled = uri != null && authOK
+    }
+
+    override fun onPause() {
+        super.onPause()
+        HttpClient.setForeground(false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        HttpClient.setForeground(true)
     }
 
 
@@ -173,7 +218,17 @@ class AddCalendarEnterUrlFragment: Fragment() {
                 credentialsModel.password.value = null
             }
 
-            AddCalendarValidationFragment().show(parentFragmentManager, "validation")
+            val uri: Uri? = Uri.parse(subscriptionSettingsModel.url.value)
+            // FIXME - this should be caught somehow
+            check(uri != null) { "No URL given" }
+            val authenticate = credentialsModel.requiresAuth.value ?: false
+
+            validationModel.validate(
+                uri,
+                if (authenticate) credentialsModel.username.value else null,
+                if (authenticate) credentialsModel.password.value else null
+            )
+
             return true
         }
         return false
