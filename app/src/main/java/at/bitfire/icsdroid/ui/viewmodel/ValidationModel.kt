@@ -7,8 +7,8 @@ package at.bitfire.icsdroid.ui.viewmodel
 import android.app.Application
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import at.bitfire.ical4android.Css3Color
 import at.bitfire.ical4android.Event
@@ -25,9 +25,7 @@ import okhttp3.MediaType
 import java.io.InputStream
 import java.io.InputStreamReader
 
-class ValidationModel(
-    val context: Application
-): ViewModel() {
+class ValidationModel(application: Application): AndroidViewModel(application) {
 
     val isVerifyingUrl = MutableLiveData(false)
 
@@ -44,7 +42,7 @@ class ValidationModel(
             isVerifyingUrl.postValue(true)
 
             val info = ResourceInfo(originalUri)
-            val downloader = object: CalendarFetcher(context, originalUri) {
+            val downloader = object: CalendarFetcher(getApplication(), originalUri) {
                 override fun onSuccess(
                     data: InputStream,
                     contentType: MediaType?,
