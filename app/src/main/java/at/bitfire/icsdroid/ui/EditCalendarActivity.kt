@@ -31,6 +31,7 @@ import at.bitfire.icsdroid.databinding.EditCalendarBinding
 import at.bitfire.icsdroid.db.AppDatabase
 import at.bitfire.icsdroid.db.dao.SubscriptionsDao
 import at.bitfire.icsdroid.db.entity.Credential
+import at.bitfire.icsdroid.model.CredentialsModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -43,7 +44,7 @@ class EditCalendarActivity: AppCompatActivity() {
     }
 
     private val subscriptionSettingsModel by viewModels<SubscriptionSettingsFragment.SubscriptionSettingsModel>()
-    private val credentialsModel by viewModels<CredentialsFragment.CredentialsModel>()
+    private val credentialsModel by viewModels<CredentialsModel>()
 
     private val model by viewModels<SubscriptionModel> {
         object: ViewModelProvider.Factory {
@@ -248,7 +249,7 @@ class EditCalendarActivity: AppCompatActivity() {
          */
         fun updateSubscription(
             subscriptionSettingsModel: SubscriptionSettingsFragment.SubscriptionSettingsModel,
-            credentialsModel: CredentialsFragment.CredentialsModel
+            credentialsModel: CredentialsModel
         ) {
             viewModelScope.launch(Dispatchers.IO) {
                 subscriptionWithCredential.value?.let { subscriptionWithCredentials ->
