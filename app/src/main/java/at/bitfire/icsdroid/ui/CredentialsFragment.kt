@@ -50,10 +50,14 @@ class CredentialsFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View =
         ComposeView(requireActivity()).apply {
             setContent {
+                val requiresAuth by model.requiresAuth.observeAsState(false)
+                val username by model.username.observeAsState("")
+                val password by model.password.observeAsState("")
+
                 LoginCredentialsComposable(
-                    model.requiresAuth.observeAsState(false),
-                    model.username.observeAsState(""),
-                    model.password.observeAsState(""),
+                    requiresAuth,
+                    username,
+                    password,
                     onRequiresAuthChange = { model.requiresAuth.postValue(it) },
                     onUsernameChange = { model.username.postValue(it) },
                     onPasswordChange = { model.password.postValue(it) },
@@ -83,9 +87,9 @@ class CredentialsFragment: Fragment() {
 
 @Composable
 fun LoginCredentialsComposable(
-    requiresAuth: State<Boolean>,
-    username: State<String>,
-    password: State<String>,
+    requiresAuth: Boolean,
+    username: String,
+    password: String,
     onRequiresAuthChange: (Boolean) -> Unit,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
@@ -103,13 +107,13 @@ fun LoginCredentialsComposable(
                 style = MaterialTheme.typography.body1,
             )
             Switch(
-                checked = requiresAuth.value,
+                checked = requiresAuth,
                 onCheckedChange = onRequiresAuthChange,
             )
         }
-        if (requiresAuth.value) {
+        if (requiresAuth) {
             OutlinedTextField(
-                value = username.value,
+                value = username,
                 onValueChange = onUsernameChange,
                 label = { Text( stringResource(R.string.add_calendar_user_name)) },
                 singleLine = true,
@@ -117,7 +121,7 @@ fun LoginCredentialsComposable(
                 modifier = Modifier.fillMaxWidth()
             )
             PasswordTextField(
-                password = password.value,
+                password = password,
                 labelText = stringResource(R.string.add_calendar_password),
                 onPasswordChange = onPasswordChange
             )
@@ -159,9 +163,9 @@ fun PasswordTextField(
 @Preview
 fun LoginCredentialsComposable_Preview() {
     LoginCredentialsComposable(
-        requiresAuth = remember { mutableStateOf(true) },
-        username = remember { mutableStateOf("Demo user") },
-        password = remember { mutableStateOf("") },
+        requiresAuth = true,
+        username = "Demo user",
+        password = "",
         onRequiresAuthChange = {},
         onUsernameChange = {},
         onPasswordChange = {}
