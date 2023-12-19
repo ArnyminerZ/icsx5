@@ -14,9 +14,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ShareCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import at.bitfire.icsdroid.R
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -29,10 +29,10 @@ class AlertFragment: DialogFragment() {
 
         fun create(message: String, throwable: Throwable? = null): AlertFragment {
             val frag = AlertFragment()
-            val args = Bundle(2)
-            args.putString(ARG_MESSAGE, message)
-            args.putSerializable(ARG_THROWABLE, throwable)
-            frag.arguments = args
+            frag.arguments = bundleOf(
+                ARG_MESSAGE to message,
+                ARG_THROWABLE to throwable
+            )
             return frag
         }
 
