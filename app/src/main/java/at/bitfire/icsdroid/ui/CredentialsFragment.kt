@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +50,8 @@ class CredentialsFragment: Fragment() {
         ComposeView(requireActivity()).apply {
             setContent {
                 val requiresAuth by model.requiresAuth.observeAsState(false)
-                val username by model.username.observeAsState("")
-                val password by model.password.observeAsState("")
+                val username by model.username.observeAsState()
+                val password by model.password.observeAsState()
 
                 LoginCredentialsComposable(
                     requiresAuth,
@@ -88,8 +87,8 @@ class CredentialsFragment: Fragment() {
 @Composable
 fun LoginCredentialsComposable(
     requiresAuth: Boolean,
-    username: String,
-    password: String,
+    username: String?,
+    password: String?,
     onRequiresAuthChange: (Boolean) -> Unit,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
@@ -113,7 +112,7 @@ fun LoginCredentialsComposable(
         }
         if (requiresAuth) {
             OutlinedTextField(
-                value = username,
+                value = username ?: "",
                 onValueChange = onUsernameChange,
                 label = { Text( stringResource(R.string.add_calendar_user_name)) },
                 singleLine = true,
@@ -121,7 +120,7 @@ fun LoginCredentialsComposable(
                 modifier = Modifier.fillMaxWidth()
             )
             PasswordTextField(
-                password = password,
+                password = password ?: "",
                 labelText = stringResource(R.string.add_calendar_password),
                 onPasswordChange = onPasswordChange
             )
