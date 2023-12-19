@@ -178,16 +178,13 @@ class EditCalendarActivity: AppCompatActivity() {
 
         val credential = subscriptionWithCredential.credential
         val requiresAuth = credential != null
-        credentialsModel.originalRequiresAuth = requiresAuth
         credentialsModel.requiresAuth.value = requiresAuth
 
         if (credential != null) {
             credential.username.let { username ->
-                credentialsModel.originalUsername = username
                 credentialsModel.username.value = username
             }
             credential.password.let { password ->
-                credentialsModel.originalPassword = password
                 credentialsModel.password.value = password
             }
         }
@@ -226,7 +223,7 @@ class EditCalendarActivity: AppCompatActivity() {
         }
     }
 
-    private fun dirty(): Boolean = subscriptionSettingsModel.dirty() || credentialsModel.dirty()
+    private fun dirty(): Boolean = subscriptionSettingsModel.dirty() || true
 
 
     /* view model and data source */
