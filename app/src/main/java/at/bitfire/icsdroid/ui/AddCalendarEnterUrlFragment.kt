@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -48,7 +49,16 @@ class AddCalendarEnterUrlFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
         val invalidate = Observer<Any?> {
-            requireActivity().invalidateOptionsMenu()
+            val itemNext = menu?.findItem(R.id.next)
+
+            val uri = validateUri()
+
+            val authOK =
+                if (credentialsModel.requiresAuth.value == true)
+                    !credentialsModel.username.value.isNullOrEmpty() && !credentialsModel.password.value.isNullOrEmpty()
+                else
+                    true
+            itemNext?.isEnabled = uri != null && authOK
         }
         arrayOf(
             subscriptionSettingsModel.url,
@@ -93,7 +103,20 @@ class AddCalendarEnterUrlFragment: Fragment() {
         binding.lifecycleOwner = this
         binding.model = subscriptionSettingsModel
 
-        setHasOptionsMenu(true)
+        activity?.addMenuProvider(
+            object : MenuProvider {
+                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                    menuInflater.inflate(R.menu.enter_url_fragment, menu)
+                    this@AddCalendarEnterUrlFragment.menu = menu
+                }
+
+                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                    TODO("Not yet implemented")
+                }
+            },
+            viewLifecycleOwner
+        )
+
         return binding.root
     }
 
@@ -103,23 +126,6 @@ class AddCalendarEnterUrlFragment: Fragment() {
         }
 
         validateUri()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.enter_url_fragment, menu).also { this.menu = menu }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        val itemNext = menu.findItem(R.id.next)
-
-        val uri = validateUri()
-
-        val authOK =
-            if (credentialsModel.requiresAuth.value == true)
-                !credentialsModel.username.value.isNullOrEmpty() && !credentialsModel.password.value.isNullOrEmpty()
-            else
-                true
-        itemNext.isEnabled = uri != null && authOK
     }
 
     override fun onPause() {
