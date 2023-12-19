@@ -70,9 +70,9 @@ class CredentialsFragment: Fragment() {
         var originalUsername: String? = null
         var originalPassword: String? = null
 
-        val requiresAuth = MutableLiveData<Boolean>()
-        val username = MutableLiveData<String>()
-        val password = MutableLiveData<String>()
+        val requiresAuth = MutableLiveData(false)
+        val username = MutableLiveData("")
+        val password = MutableLiveData("")
 
         init {
             requiresAuth.value = false
