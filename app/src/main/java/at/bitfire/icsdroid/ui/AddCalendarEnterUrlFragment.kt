@@ -82,7 +82,7 @@ class AddCalendarEnterUrlFragment: Fragment() {
 
                 if (subscriptionSettingsModel.color.value == null)
                     subscriptionSettingsModel.color.value =
-                        info.calendarColor ?: resources.getColor(R.color.lightblue)
+                        info.calendarColor ?: ContextCompat.getColor(requireContext(), R.color.lightblue)
 
                 if (subscriptionSettingsModel.title.value.isNullOrBlank())
                     subscriptionSettingsModel.title.value = info.calendarName ?: info.uri.toString()
