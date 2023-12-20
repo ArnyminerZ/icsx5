@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -49,8 +50,6 @@ class AddCalendarEnterUrlFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
         val invalidate = Observer<Any?> {
-            val itemNext = menu?.findItem(R.id.next)
-
             val uri = validateUri()
 
             val authOK =
@@ -58,7 +57,7 @@ class AddCalendarEnterUrlFragment: Fragment() {
                     !credentialsModel.username.value.isNullOrEmpty() && !credentialsModel.password.value.isNullOrEmpty()
                 else
                     true
-            itemNext?.isEnabled = uri != null && authOK
+            menu?.findItem(R.id.next)?.isEnabled = uri != null && authOK
         }
         arrayOf(
             subscriptionSettingsModel.url,
@@ -111,7 +110,27 @@ class AddCalendarEnterUrlFragment: Fragment() {
                 }
 
                 override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    TODO("Not yet implemented")
+                    if (menuItem.itemId == R.id.next) {
+                        // flush the credentials if auth toggle is disabled
+                        if (credentialsModel.requiresAuth.value != true) {
+                            credentialsModel.username.value = null
+                            credentialsModel.password.value = null
+                        }
+
+                        val uri: Uri? = Uri.parse(subscriptionSettingsModel.url.value)
+                        // FIXME - this should be caught somehow
+                        check(uri != null) { "No URL given" }
+                        val authenticate = credentialsModel.requiresAuth.value ?: false
+
+                        validationModel.validate(
+                            uri,
+                            if (authenticate) credentialsModel.username.value else null,
+                            if (authenticate) credentialsModel.password.value else null
+                        )
+
+                        return true
+                    }
+                    return false
                 }
             },
             viewLifecycleOwner
@@ -210,34 +229,6 @@ class AddCalendarEnterUrlFragment: Fragment() {
             binding.url.error = errorMsg
         }
         return uri
-    }
-
-
-    /* actions */
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.next) {
-
-            // flush the credentials if auth toggle is disabled
-            if (credentialsModel.requiresAuth.value != true) {
-                credentialsModel.username.value = null
-                credentialsModel.password.value = null
-            }
-
-            val uri: Uri? = Uri.parse(subscriptionSettingsModel.url.value)
-            // FIXME - this should be caught somehow
-            check(uri != null) { "No URL given" }
-            val authenticate = credentialsModel.requiresAuth.value ?: false
-
-            validationModel.validate(
-                uri,
-                if (authenticate) credentialsModel.username.value else null,
-                if (authenticate) credentialsModel.password.value else null
-            )
-
-            return true
-        }
-        return false
     }
 
 }
