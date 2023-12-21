@@ -25,6 +25,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Circle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,17 +51,23 @@ class SubscriptionSettingsFragment : Fragment() {
         }
         return ComposeView(requireActivity()).apply {
             setContent {
+                val url by model.url.observeAsState("")
+                val title by model.title.observeAsState("")
+                val color by model.color.observeAsState(0)
+                val ignoreAlerts by model.ignoreAlerts.observeAsState(false)
+                val defaultAlarmMinutes by model.defaultAlarmMinutes.observeAsState()
+                val defaultAllDayAlarmMinutes by model.defaultAllDayAlarmMinutes.observeAsState()
                 SubscriptionSettingsComposable(
-                    url = model.url.observeAsState("").value,
-                    title = model.title.observeAsState("").value,
+                    url = url,
+                    title = title,
                     titleChanged = { model.title.postValue(it) },
-                    color = model.color.observeAsState(0).value,
-                    colorIconClicked = { colorPickerContract.launch(model.color.value) },
-                    ignoreAlerts = model.ignoreAlerts.observeAsState(false).value,
+                    color = color,
+                    colorIconClicked = { colorPickerContract.launch(color) },
+                    ignoreAlerts = ignoreAlerts,
                     ignoreAlertsChanged = { model.ignoreAlerts.postValue(it) },
-                    defaultAlarmMinutes = (model.defaultAlarmMinutes.observeAsState().value ?: "").toString(),
+                    defaultAlarmMinutes = (defaultAlarmMinutes ?: "").toString(),
                     defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(stringToLongOrNull(it)) },
-                    defaultAllDayAlarmMinutes = (model.defaultAllDayAlarmMinutes.observeAsState().value ?: "").toString(),
+                    defaultAllDayAlarmMinutes = (defaultAllDayAlarmMinutes ?: "").toString(),
                     defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(stringToLongOrNull(it)) }
                 )
             }
