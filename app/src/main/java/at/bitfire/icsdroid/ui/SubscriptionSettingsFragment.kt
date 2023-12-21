@@ -66,18 +66,13 @@ class SubscriptionSettingsFragment : Fragment() {
                     ignoreAlerts = ignoreAlerts,
                     ignoreAlertsChanged = { model.ignoreAlerts.postValue(it) },
                     defaultAlarmMinutes = (defaultAlarmMinutes ?: "").toString(),
-                    defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(stringToLongOrNull(it)) },
+                    defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
                     defaultAllDayAlarmMinutes = (defaultAllDayAlarmMinutes ?: "").toString(),
-                    defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(stringToLongOrNull(it)) }
+                    defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) }
                 )
             }
         }
     }
-
-    private fun stringToLongOrNull(input: String) = try {
-        input.toLong()
-    } catch (e: NumberFormatException) { null }
-
 
     class SubscriptionSettingsModel : ViewModel() {
         val url = MutableLiveData<String>()
