@@ -59,44 +59,43 @@ class AddCalendarEnterUrlFragment : Fragment() {
 
             nextMenuItem = menu.findItem(R.id.next)
 
-            // Invoke the observer once at the beginning to set the initial state of nextMenuItem
+            // Invoke the observer once to set the initial visibility of nextMenuItem
             formInvalidator.onChanged(null)
         }
 
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-            when (menuItem.itemId) {
-                R.id.next -> {
-                    // flush the credentials if auth toggle is disabled
-                    if (credentialsModel.requiresAuth.value != true) {
-                        credentialsModel.username.value = null
-                        credentialsModel.password.value = null
-                    }
-
-                    val uriString: String? = subscriptionSettingsModel.url.value
-                    val uri: Uri? = uriString?.let(Uri::parse)
-                    val authenticate = credentialsModel.requiresAuth.value ?: false
-
-                    if (uri != null) {
-                        val validationSnackbar = Snackbar.make(
-                            requireContext(),
-                            binding.root,
-                            getString(R.string.add_calendar_validating),
-                            Snackbar.LENGTH_INDEFINITE
-                        )
-                        validationSnackbar.show()
-
-                        validationModel.validate(
-                            uri,
-                            if (authenticate) credentialsModel.username.value else null,
-                            if (authenticate) credentialsModel.password.value else null
-                        ).invokeOnCompletion { validationSnackbar.dismiss() }
-                    }
-
-                    true
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+            R.id.next -> {
+                // flush the credentials if auth toggle is disabled
+                if (credentialsModel.requiresAuth.value != true) {
+                    credentialsModel.username.value = null
+                    credentialsModel.password.value = null
                 }
 
-                else -> false
+                val uriString: String? = subscriptionSettingsModel.url.value
+                val uri: Uri? = uriString?.let(Uri::parse)
+                val authenticate = credentialsModel.requiresAuth.value ?: false
+
+                if (uri != null) {
+                    val validationSnackbar = Snackbar.make(
+                        requireContext(),
+                        binding.root,
+                        getString(R.string.add_calendar_validating),
+                        Snackbar.LENGTH_INDEFINITE
+                    )
+                    validationSnackbar.show()
+
+                    validationModel.validate(
+                        uri,
+                        if (authenticate) credentialsModel.username.value else null,
+                        if (authenticate) credentialsModel.password.value else null
+                    ).invokeOnCompletion { validationSnackbar.dismiss() }
+                }
+
+                true
             }
+
+            else -> false
+        }
     }
 
     private val formInvalidator = Observer<Any?> {
