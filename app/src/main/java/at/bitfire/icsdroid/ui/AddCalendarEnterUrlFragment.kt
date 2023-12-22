@@ -41,7 +41,7 @@ class AddCalendarEnterUrlFragment : Fragment() {
     private val validationModel by activityViewModels<ValidationModel>()
     private lateinit var binding: AddCalendarEnterUrlBinding
 
-    private var menu: Menu? = null
+    private var nextMenuItem: MenuItem? = null
 
     private val pickFile = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         if (uri != null) {
@@ -55,7 +55,11 @@ class AddCalendarEnterUrlFragment : Fragment() {
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.enter_url_fragment, menu)
-            this@AddCalendarEnterUrlFragment.menu = menu
+
+            nextMenuItem = menu.findItem(R.id.next)
+
+            // Invoke the observer once at the beginning to set the initial state of nextMenuItem
+            formInvalidator.onChanged(null)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
@@ -86,6 +90,20 @@ class AddCalendarEnterUrlFragment : Fragment() {
             }
     }
 
+    private val formInvalidator = Observer<Any?> {
+        val uri = validateUri()
+
+        val requiresAuth = credentialsModel.requiresAuth.value ?: false
+        val username: String? = credentialsModel.username.value
+        val password: String? = credentialsModel.password.value
+        val authOK =
+            if (requiresAuth)
+                !username.isNullOrEmpty() && !password.isNullOrEmpty()
+            else
+                true
+        nextMenuItem?.isVisible = uri != null && authOK
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
         binding = AddCalendarEnterUrlBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
@@ -114,33 +132,17 @@ class AddCalendarEnterUrlFragment : Fragment() {
 
         activity?.addMenuProvider(menuProvider)
 
-        val invalidate = Observer<Any?> {
-            val uri = validateUri()
-
-            val requiresAuth = credentialsModel.requiresAuth.value ?: false
-            val username: String? = credentialsModel.username.value
-            val password: String? = credentialsModel.password.value
-            val authOK =
-                if (requiresAuth)
-                    !username.isNullOrEmpty() && !password.isNullOrEmpty()
-                else
-                    true
-            menu?.findItem(R.id.next)?.isEnabled = uri != null && authOK
-        }
         arrayOf(
             subscriptionSettingsModel.url,
             credentialsModel.requiresAuth,
             credentialsModel.username,
             credentialsModel.password
         ).forEach {
-            it.observe(viewLifecycleOwner, invalidate)
+            it.observe(viewLifecycleOwner, formInvalidator)
         }
 
-        // Invoke the observer once at the beginning to set the initial state
-        invalidate.onChanged(null)
-
         validationModel.isVerifyingUrl.observe(viewLifecycleOwner) { isVerifyingUrl ->
-            menu?.findItem(R.id.next)?.isEnabled = !isVerifyingUrl
+            nextMenuItem?.isVisible = !isVerifyingUrl
             binding.urlEdit.isEnabled = !isVerifyingUrl
             binding.pickStorageFile.isEnabled = !isVerifyingUrl
         }
@@ -176,6 +178,7 @@ class AddCalendarEnterUrlFragment : Fragment() {
         super.onDestroyView()
 
         activity?.removeMenuProvider(menuProvider)
+        nextMenuItem = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
