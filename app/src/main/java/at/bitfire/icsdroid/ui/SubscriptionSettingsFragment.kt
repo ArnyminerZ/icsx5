@@ -137,7 +137,7 @@ class SubscriptionSettingsFragment : Fragment() {
     }
 
     class SubscriptionSettingsModel : ViewModel() {
-        var url = MutableLiveData<String>()
+        var url = MutableLiveData<String?>()
 
         var originalTitle: String? = null
         val title = MutableLiveData<String>()
