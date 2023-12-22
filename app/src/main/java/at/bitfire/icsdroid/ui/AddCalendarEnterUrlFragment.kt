@@ -30,6 +30,7 @@ import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.databinding.AddCalendarEnterUrlBinding
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.ui.viewmodel.ValidationModel
+import com.google.android.material.snackbar.Snackbar
 import java.net.URI
 import java.net.URISyntaxException
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -76,11 +77,19 @@ class AddCalendarEnterUrlFragment : Fragment() {
                     val authenticate = credentialsModel.requiresAuth.value ?: false
 
                     if (uri != null) {
+                        val validationSnackbar = Snackbar.make(
+                            requireContext(),
+                            binding.root,
+                            getString(R.string.add_calendar_validating),
+                            Snackbar.LENGTH_INDEFINITE
+                        )
+                        validationSnackbar.show()
+
                         validationModel.validate(
                             uri,
                             if (authenticate) credentialsModel.username.value else null,
                             if (authenticate) credentialsModel.password.value else null
-                        )
+                        ).invokeOnCompletion { validationSnackbar.dismiss() }
                     }
 
                     true
