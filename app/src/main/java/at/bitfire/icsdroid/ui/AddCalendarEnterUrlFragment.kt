@@ -110,9 +110,12 @@ class AddCalendarEnterUrlFragment : Fragment() {
         val invalidate = Observer<Any?> {
             val uri = validateUri()
 
+            val requiresAuth = credentialsModel.requiresAuth.value ?: false
+            val username: String? = credentialsModel.username.value
+            val password: String? = credentialsModel.password.value
             val authOK =
-                if (credentialsModel.requiresAuth.value == true)
-                    !credentialsModel.username.value.isNullOrEmpty() && !credentialsModel.password.value.isNullOrEmpty()
+                if (requiresAuth)
+                    !username.isNullOrEmpty() && !password.isNullOrEmpty()
                 else
                     true
             menu?.findItem(R.id.next)?.isEnabled = uri != null && authOK
