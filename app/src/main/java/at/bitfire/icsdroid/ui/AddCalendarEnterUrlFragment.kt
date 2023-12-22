@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
@@ -96,13 +97,17 @@ class AddCalendarEnterUrlFragment : Fragment() {
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
             )
             setContent {
+                val requiresAuth by credentialsModel.requiresAuth.observeAsState(false)
+                val username: String? by credentialsModel.username.observeAsState("")
+                val password: String? by credentialsModel.password.observeAsState("")
+
                 LoginCredentialsComposable(
-                    credentialsModel.requiresAuth.observeAsState(false).value,
-                    credentialsModel.username.observeAsState("").value,
-                    credentialsModel.password.observeAsState("").value,
-                    onRequiresAuthChange = { credentialsModel.requiresAuth.postValue(it) },
-                    onUsernameChange = { credentialsModel.username.postValue(it) },
-                    onPasswordChange = { credentialsModel.password.postValue(it) },
+                    requiresAuth,
+                    username,
+                    password,
+                    onRequiresAuthChange = credentialsModel.requiresAuth::postValue,
+                    onUsernameChange = credentialsModel.username::postValue,
+                    onPasswordChange = credentialsModel.password::postValue,
                 )
             }
         }
