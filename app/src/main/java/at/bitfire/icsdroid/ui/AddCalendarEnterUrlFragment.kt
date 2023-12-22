@@ -137,9 +137,8 @@ class AddCalendarEnterUrlFragment: Fragment() {
                             credentialsModel.password.value = null
                         }
 
-                        val uri: Uri? = Uri.parse(subscriptionSettingsModel.url.value)
-                        // FIXME - this should be caught somehow
-                        check(uri != null) { "No URL given" }
+                        val stringUri: String = subscriptionSettingsModel.url.value ?: return true
+                        val uri: Uri = Uri.parse(stringUri) ?: return true
                         val authenticate = credentialsModel.requiresAuth.value ?: false
 
                         validationModel.validate(
