@@ -33,7 +33,7 @@ import java.net.URI
 import java.net.URISyntaxException
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class AddCalendarEnterUrlFragment: Fragment() {
+class AddCalendarEnterUrlFragment : Fragment() {
 
     private val subscriptionSettingsModel by activityViewModels<SubscriptionSettingsFragment.SubscriptionSettingsModel>()
     private val credentialsModel by activityViewModels<CredentialsModel>()
@@ -49,6 +49,40 @@ class AddCalendarEnterUrlFragment: Fragment() {
 
             binding.url.editText?.setText(uri.toString())
         }
+    }
+
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.enter_url_fragment, menu)
+            this@AddCalendarEnterUrlFragment.menu = menu
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+            when (menuItem.itemId) {
+                R.id.next -> {
+                    // flush the credentials if auth toggle is disabled
+                    if (credentialsModel.requiresAuth.value != true) {
+                        credentialsModel.username.value = null
+                        credentialsModel.password.value = null
+                    }
+
+                    val stringUri: String? = subscriptionSettingsModel.url.value
+                    val uri: Uri? = stringUri?.let(Uri::parse)
+                    val authenticate = credentialsModel.requiresAuth.value ?: false
+
+                    if (uri != null) {
+                        validationModel.validate(
+                            uri,
+                            if (authenticate) credentialsModel.username.value else null,
+                            if (authenticate) credentialsModel.password.value else null
+                        )
+                    }
+
+                    true
+                }
+
+                else -> false
+            }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
@@ -122,40 +156,15 @@ class AddCalendarEnterUrlFragment: Fragment() {
             }
         }
 
-        activity?.addMenuProvider(
-            object : MenuProvider {
-                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                    menuInflater.inflate(R.menu.enter_url_fragment, menu)
-                    this@AddCalendarEnterUrlFragment.menu = menu
-                }
-
-                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                    if (menuItem.itemId == R.id.next) {
-                        // flush the credentials if auth toggle is disabled
-                        if (credentialsModel.requiresAuth.value != true) {
-                            credentialsModel.username.value = null
-                            credentialsModel.password.value = null
-                        }
-
-                        val stringUri: String = subscriptionSettingsModel.url.value ?: return true
-                        val uri: Uri = Uri.parse(stringUri) ?: return true
-                        val authenticate = credentialsModel.requiresAuth.value ?: false
-
-                        validationModel.validate(
-                            uri,
-                            if (authenticate) credentialsModel.username.value else null,
-                            if (authenticate) credentialsModel.password.value else null
-                        )
-
-                        return true
-                    }
-                    return false
-                }
-            },
-            viewLifecycleOwner
-        )
+        activity?.addMenuProvider(menuProvider)
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        activity?.removeMenuProvider(menuProvider)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
