@@ -86,6 +86,27 @@ class AddCalendarEnterUrlFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
+        binding = AddCalendarEnterUrlBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.model = subscriptionSettingsModel
+
+        binding.credentialsComposable.apply {
+            // Dispose the Composition when viewLifecycleOwner is destroyed
+            setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
+            )
+            setContent {
+                LoginCredentialsComposable(
+                    credentialsModel.requiresAuth.observeAsState(false).value,
+                    credentialsModel.username.observeAsState("").value,
+                    credentialsModel.password.observeAsState("").value,
+                    onRequiresAuthChange = { credentialsModel.requiresAuth.postValue(it) },
+                    onUsernameChange = { credentialsModel.username.postValue(it) },
+                    onPasswordChange = { credentialsModel.password.postValue(it) },
+                )
+            }
+        }
+
         val invalidate = Observer<Any?> {
             val uri = validateUri()
 
@@ -104,6 +125,9 @@ class AddCalendarEnterUrlFragment : Fragment() {
         ).forEach {
             it.observe(viewLifecycleOwner, invalidate)
         }
+
+        // Invoke the observer once at the beginning to set the initial state
+        invalidate.onChanged(null)
 
         validationModel.isVerifyingUrl.observe(viewLifecycleOwner) { isVerifyingUrl ->
             menu?.findItem(R.id.next)?.isEnabled = !isVerifyingUrl
@@ -132,27 +156,6 @@ class AddCalendarEnterUrlFragment : Fragment() {
                 val errorMessage =
                     exception.localizedMessage ?: exception.message ?: exception.toString()
                 AlertFragment.create(errorMessage, exception).show(parentFragmentManager, null)
-            }
-        }
-
-        binding = AddCalendarEnterUrlBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
-        binding.model = subscriptionSettingsModel
-
-        binding.credentialsComposable.apply {
-            // Dispose the Composition when viewLifecycleOwner is destroyed
-            setViewCompositionStrategy(
-                ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
-            )
-            setContent {
-                LoginCredentialsComposable(
-                    credentialsModel.requiresAuth.observeAsState(false).value,
-                    credentialsModel.username.observeAsState("").value,
-                    credentialsModel.password.observeAsState("").value,
-                    onRequiresAuthChange = { credentialsModel.requiresAuth.postValue(it) },
-                    onUsernameChange = { credentialsModel.username.postValue(it) },
-                    onPasswordChange = { credentialsModel.password.postValue(it) },
-                )
             }
         }
 
