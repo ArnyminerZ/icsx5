@@ -112,6 +112,8 @@ class AddCalendarEnterUrlFragment : Fragment() {
             }
         }
 
+        activity?.addMenuProvider(menuProvider)
+
         val invalidate = Observer<Any?> {
             val uri = validateUri()
 
@@ -166,8 +168,6 @@ class AddCalendarEnterUrlFragment : Fragment() {
                 AlertFragment.create(errorMessage, exception).show(parentFragmentManager, null)
             }
         }
-
-        activity?.addMenuProvider(menuProvider)
 
         return binding.root
     }
