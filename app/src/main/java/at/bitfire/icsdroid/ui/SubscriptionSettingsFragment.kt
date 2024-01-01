@@ -4,6 +4,7 @@
 
 package at.bitfire.icsdroid.ui
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -16,15 +17,18 @@ import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.databinding.SubscriptionSettingsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.joda.time.Minutes
 import org.joda.time.format.PeriodFormat
+import java.net.URISyntaxException
 
 class SubscriptionSettingsFragment : Fragment() {
 
@@ -137,7 +141,9 @@ class SubscriptionSettingsFragment : Fragment() {
     }
 
     class SubscriptionSettingsModel : ViewModel() {
-        var url = MutableLiveData<String>()
+        val url = MutableLiveData<String>()
+
+        val urlError = MutableLiveData<String?>()
 
         var originalTitle: String? = null
         val title = MutableLiveData<String>()
@@ -154,8 +160,35 @@ class SubscriptionSettingsFragment : Fragment() {
         var originalDefaultAllDayAlarmMinutes: Long? = null
         val defaultAllDayAlarmMinutes = MutableLiveData<Long>()
 
+        val supportsAuthentication = MediatorLiveData(false).apply {
+            addSource(url) {
+                val uri = try {
+                    Uri.parse(it)
+                } catch (e: URISyntaxException) {
+                    return@addSource
+                }
+                value = HttpUtils.supportsAuthentication(uri)
+            }
+        }
+
         fun dirty(): Boolean = originalTitle != title.value || originalColor != color.value || originalIgnoreAlerts != ignoreAlerts.value ||
                 originalDefaultAlarmMinutes != defaultAlarmMinutes.value || originalDefaultAllDayAlarmMinutes != defaultAllDayAlarmMinutes.value
+
+        /**
+         * If [uri] has either `webcal` or `webcals` as scheme, the value of [url] is replaced with
+         * the corresponding http* scheme (`http` and `https` respectively).
+         *
+         * @return The adjusted uri.
+         */
+        fun replaceUrlScheme(uri: Uri): Uri {
+            return if (uri.scheme.equals("webcal", true)) {
+                uri.buildUpon().scheme("http").build().also { url.value = it.toString() }
+            } else if (uri.scheme.equals("webcals", true)) {
+                uri.buildUpon().scheme("https").build().also { url.value = it.toString() }
+            } else {
+                uri
+            }
+        }
     }
 
 }
