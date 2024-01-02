@@ -65,9 +65,9 @@ class SubscriptionSettingsFragment : Fragment() {
                     colorIconClicked = { colorPickerContract.launch(color) },
                     ignoreAlerts = ignoreAlerts,
                     ignoreAlertsChanged = { model.ignoreAlerts.postValue(it) },
-                    defaultAlarmMinutes = (defaultAlarmMinutes ?: "").toString(),
+                    defaultAlarmMinutes = defaultAlarmMinutes,
                     defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
-                    defaultAllDayAlarmMinutes = (defaultAllDayAlarmMinutes ?: "").toString(),
+                    defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
                     defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) }
                 )
             }
@@ -94,9 +94,9 @@ private fun SubscriptionSettingsComposable(
     colorIconClicked: () -> Unit,
     ignoreAlerts: Boolean,
     ignoreAlertsChanged: (Boolean) -> Unit,
-    defaultAlarmMinutes: String,
+    defaultAlarmMinutes: Long?,
     defaultAlarmMinutesChanged: (String) -> Unit,
-    defaultAllDayAlarmMinutes: String,
+    defaultAllDayAlarmMinutes: Long?,
     defaultAllDayAlarmMinutesChanged: (String) -> Unit,
 ) {
     Column(
@@ -178,7 +178,7 @@ private fun SubscriptionSettingsComposable(
             style = MaterialTheme.typography.body2,
         )
         OutlinedTextField(
-            value = defaultAlarmMinutes,
+            value = (defaultAlarmMinutes ?: "").toString(),
             onValueChange = defaultAlarmMinutesChanged,
             label = { Text(stringResource(R.string.default_alarm_dialog_hint)) },
             singleLine = true,
@@ -199,7 +199,7 @@ private fun SubscriptionSettingsComposable(
             style = MaterialTheme.typography.body2,
         )
         OutlinedTextField(
-            value = defaultAllDayAlarmMinutes,
+            value = (defaultAllDayAlarmMinutes ?: "").toString(),
             onValueChange = defaultAllDayAlarmMinutesChanged,
             label = { Text(stringResource(R.string.default_alarm_dialog_hint)) },
             singleLine = true,
