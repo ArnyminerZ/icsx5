@@ -242,7 +242,7 @@ class EditCalendarActivity: AppCompatActivity() {
          */
         fun updateSubscription(
             subscriptionSettingsModel: SubscriptionSettingsFragment.SubscriptionSettingsModel,
-            credentialsModel: CredentialsFragment.CredentialsModel
+            credentialsModel: CredentialsModel
         ) {
             viewModelScope.launch(Dispatchers.IO) {
                 subscriptionWithCredential.value?.let { subscriptionWithCredentials ->
