@@ -2,14 +2,14 @@
  * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
  **************************************************************************************************/
 
-package at.bitfire.icsdroid.ui
+package at.bitfire.icsdroid.model
 
 import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
 import at.bitfire.ical4android.Css3Color
 import at.bitfire.icsdroid.HttpUtils.toAndroidUri
-import at.bitfire.icsdroid.model.ValidationModel
+import at.bitfire.icsdroid.ui.ResourceInfo
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
