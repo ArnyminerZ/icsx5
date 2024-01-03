@@ -2,7 +2,7 @@
  * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
  **************************************************************************************************/
 
-package at.bitfire.icsdroid.ui.viewmodel
+package at.bitfire.icsdroid.model
 
 import android.app.Application
 import android.net.Uri

@@ -9,7 +9,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
 import at.bitfire.ical4android.Css3Color
 import at.bitfire.icsdroid.HttpUtils.toAndroidUri
-import at.bitfire.icsdroid.ui.viewmodel.ValidationModel
+import at.bitfire.icsdroid.model.ValidationModel
 import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

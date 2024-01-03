@@ -29,7 +29,7 @@ import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.databinding.AddCalendarEnterUrlBinding
 import at.bitfire.icsdroid.model.CredentialsModel
-import at.bitfire.icsdroid.ui.viewmodel.ValidationModel
+import at.bitfire.icsdroid.model.ValidationModel
 import com.google.android.material.snackbar.Snackbar
 import java.net.URI
 import java.net.URISyntaxException
