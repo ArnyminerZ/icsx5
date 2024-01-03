@@ -20,7 +20,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
-class AddCalendarEnterUrlFragmentValidationTest {
+class ValidationModelTestTest {
 
     companion object {
 
