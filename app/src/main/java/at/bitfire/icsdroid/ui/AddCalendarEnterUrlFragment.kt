@@ -118,9 +118,8 @@ class AddCalendarEnterUrlFragment : Fragment() {
             nextMenuItem?.isVisible = !isVerifyingUrl
         }
 
-        validationModel.result.observe(viewLifecycleOwner) { info ->
-            val exception = info.exception
-            if (exception == null) {
+        validationModel.result.observe(viewLifecycleOwner) { info: ResourceInfo? ->
+            if (info != null && info.exception == null) {
                 subscriptionSettingsModel.url.value = info.uri.toString()
 
                 if (subscriptionSettingsModel.color.value == null)
