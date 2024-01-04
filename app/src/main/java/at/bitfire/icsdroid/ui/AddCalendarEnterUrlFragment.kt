@@ -70,8 +70,7 @@ class AddCalendarEnterUrlFragment : Fragment() {
                     credentialsModel.password.value = null
                 }
 
-                val uriString: String? = subscriptionSettingsModel.url.value
-                val uri: Uri? = uriString?.let(Uri::parse)
+                val uri: Uri? = subscriptionSettingsModel.url.value?.let(Uri::parse)
                 val authenticate = credentialsModel.requiresAuth.value ?: false
 
                 if (uri != null) {
