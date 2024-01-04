@@ -55,7 +55,8 @@ fun EnterUrlComposable(
     isVerifyingUrl: Boolean,
     validationResult: ResourceInfo?,
     onValidationResultDismiss: () -> Unit,
-    onPickFileRequested: () -> Unit
+    onPickFileRequested: () -> Unit,
+    onSubmit: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -110,7 +111,7 @@ fun EnterUrlComposable(
                     keyboardType = KeyboardType.Uri,
                     imeAction = ImeAction.Go
                 ),
-                keyboardActions = KeyboardActions { /*TODO*/ },
+                keyboardActions = KeyboardActions { onSubmit() },
                 maxLines = 1,
                 singleLine = true,
                 placeholder = { Text(stringResource(R.string.add_calendar_url_sample)) },

@@ -172,7 +172,10 @@ class AddCalendarEnterUrlFragment : Fragment() {
                     isVerifyingUrl = isVerifyingUrl,
                     validationResult = validationResult,
                     onValidationResultDismiss = { validationModel.result.value = null },
-                    onPickFileRequested = { pickFile.launch(arrayOf("text/calendar")) }
+                    onPickFileRequested = { pickFile.launch(arrayOf("text/calendar")) },
+                    onSubmit = {
+                        nextMenuItem?.let { id -> menuProvider.onMenuItemSelected(id) }
+                    }
                 )
             }
         }
