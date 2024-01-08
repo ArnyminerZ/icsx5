@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import at.bitfire.icsdroid.R
 
@@ -85,10 +86,10 @@ fun EnterUrlComposable(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
         ) {
             // Instead of adding vertical padding to column, use spacer so that if content is
             // scrolled, it is not spaced
@@ -104,8 +105,8 @@ fun EnterUrlComposable(
                 value = url,
                 onValueChange = onUrlChange,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
                     keyboardType = KeyboardType.Uri,
@@ -131,8 +132,8 @@ fun EnterUrlComposable(
                 text = stringResource(R.string.add_calendar_pick_file_text),
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
             )
 
             TextButton(
@@ -146,8 +147,8 @@ fun EnterUrlComposable(
             AnimatedVisibility(
                 visible = isInsecure,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                        .fillMaxWidth()
+                        .padding(16.dp)
             ) {
                 Row(Modifier.fillMaxWidth()) {
                     Icon(imageVector = Icons.Rounded.Warning, contentDescription = null)
@@ -174,4 +175,27 @@ fun EnterUrlComposable(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+@Preview
+@Composable
+fun EnterUrlComposable_Preview() {
+    EnterUrlComposable(
+        requiresAuth = true,
+        onRequiresAuthChange = {},
+        username = "previewUser",
+        onUsernameChange = {},
+        password = "previewUserPassword",
+        onPasswordChange = {},
+        isInsecure = true,
+        url = "http://previewUrl.com/calendarfile.ics",
+        onUrlChange = {},
+        urlError = "",
+        supportsAuthentication = true,
+        isVerifyingUrl = true,
+        validationResult = null,
+        onValidationResultDismiss = {},
+        onPickFileRequested = {},
+        onSubmit = {}
+    )
 }
