@@ -79,13 +79,13 @@ class SubscriptionSettingsFragment : Fragment() {
     }
 
     class SubscriptionSettingsModel : ViewModel() {
-        val url = MutableLiveData<String>()
-        val urlError = MutableLiveData<String?>()
-        val title = MutableLiveData<String>()
-        val color = MutableLiveData<Int>()
-        val ignoreAlerts = MutableLiveData<Boolean>()
-        val defaultAlarmMinutes = MutableLiveData<Long>()
-        val defaultAllDayAlarmMinutes = MutableLiveData<Long>()
+        val url = MutableLiveData("")
+        val urlError = MutableLiveData<String?>(null)
+        val title = MutableLiveData("")
+        val color = MutableLiveData<Int?>(null)
+        val ignoreAlerts = MutableLiveData(false)
+        val defaultAlarmMinutes = MutableLiveData<Long?>(null)
+        val defaultAllDayAlarmMinutes = MutableLiveData<Long?>(null)
 
         val supportsAuthentication = MediatorLiveData(false).apply {
             addSource(url) {
