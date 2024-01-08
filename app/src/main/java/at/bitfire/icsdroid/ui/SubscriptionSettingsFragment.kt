@@ -106,7 +106,7 @@ private fun SubscriptionSettingsComposable(
     url: String,
     title: String,
     titleChanged: (String) -> Unit,
-    color: Int,
+    color: Int?,
     colorIconClicked: () -> Unit,
     ignoreAlerts: Boolean,
     ignoreAlertsChanged: (Boolean) -> Unit,
@@ -157,7 +157,7 @@ private fun SubscriptionSettingsComposable(
                     Icon(
                         imageVector = Icons.Rounded.Circle,
                         contentDescription = stringResource(R.string.add_calendar_pick_color),
-                        tint = Color(color),
+                        tint = color?.let { Color(it) } ?: Color.Unspecified,
                         modifier = Modifier
                             .size(48.dp)
                     )
