@@ -79,7 +79,7 @@ class SubscriptionSettingsFragment : Fragment() {
     }
 
     class SubscriptionSettingsModel : ViewModel() {
-        val url = MutableLiveData("")
+        val url = MutableLiveData<String?>(null)
         val urlError = MutableLiveData<String?>(null)
         val title = MutableLiveData("")
         val color = MutableLiveData<Int?>(null)
@@ -93,6 +93,9 @@ class SubscriptionSettingsFragment : Fragment() {
                     Uri.parse(it)
                 } catch (e: URISyntaxException) {
                     return@addSource
+                } catch (_: NullPointerException) {
+                    value = false
+                    return@addSource
                 }
                 value = HttpUtils.supportsAuthentication(uri)
             }
@@ -103,7 +106,7 @@ class SubscriptionSettingsFragment : Fragment() {
 
 @Composable
 private fun SubscriptionSettingsComposable(
-    url: String,
+    url: String?,
     title: String,
     titleChanged: (String) -> Unit,
     color: Int?,
@@ -137,7 +140,7 @@ private fun SubscriptionSettingsComposable(
                     Modifier.weight(5f)
                 ) {
                     Text(
-                        text = url,
+                        text = url ?: "",
                         color = Color.Gray,
                         style = MaterialTheme.typography.body2,
                     )
