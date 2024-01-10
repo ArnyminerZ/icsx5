@@ -31,6 +31,10 @@ class AddCalendarDetailsFragment: Fragment() {
     private val credentialsModel by activityViewModels<CredentialsModel>()
     private val model by activityViewModels<SubscriptionModel>()
 
+    private val colorPickerContract = registerForActivityResult(ColorPickerActivity.Contract()) { color ->
+        subscriptionSettingsModel.color.value = color
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,9 +68,6 @@ class AddCalendarDetailsFragment: Fragment() {
             Toast.makeText(requireActivity(), message, Toast.LENGTH_LONG).show()
         }
 
-        val colorPickerContract = registerForActivityResult(ColorPickerActivity.Contract()) { color ->
-            subscriptionSettingsModel.color.value = color
-        }
         return ComposeView(requireContext()).apply {
             // Dispose the Composition when viewLifecycleOwner is destroyed
             setViewCompositionStrategy(
