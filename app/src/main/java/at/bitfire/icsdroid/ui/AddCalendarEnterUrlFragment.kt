@@ -144,7 +144,7 @@ class AddCalendarEnterUrlFragment : Fragment() {
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
             )
             setContent {
-                val url: String by subscriptionSettingsModel.url.observeAsState("")
+                val url: String? by subscriptionSettingsModel.url.observeAsState(null)
                 val urlError: String? by subscriptionSettingsModel.urlError.observeAsState(null)
                 val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(false)
                 val requiresAuth by credentialsModel.requiresAuth.observeAsState(false)
