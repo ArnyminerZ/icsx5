@@ -32,7 +32,7 @@ class SubscriptionModel(application: Application) : AndroidViewModel(application
         credentialsModel: CredentialsModel,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            isCreating.value = true
+            isCreating.postValue(true)
             try {
                 val subscription = Subscription(
                     displayName = subscriptionSettingsModel.title.value!!,
@@ -69,7 +69,7 @@ class SubscriptionModel(application: Application) : AndroidViewModel(application
                 Log.e(Constants.TAG, "Couldn't create calendar", e)
                 errorMessage.postValue(e.localizedMessage)
             } finally {
-                isCreating.value = false
+                isCreating.postValue(false)
             }
         }
     }
