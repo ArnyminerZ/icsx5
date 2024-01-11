@@ -22,6 +22,8 @@ class SubscriptionSettingsModel : ViewModel() {
                 Uri.parse(it)
             } catch (e: URISyntaxException) {
                 return@addSource
+            } catch (_: NullPointerException) {
+                return@addSource
             }
             value = HttpUtils.supportsAuthentication(uri)
         }
