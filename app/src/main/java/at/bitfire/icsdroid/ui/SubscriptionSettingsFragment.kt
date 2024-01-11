@@ -123,7 +123,7 @@ fun SubscriptionSettingsComposable(
                         onValueChange = titleChanged,
                         label = { Text(stringResource(R.string.add_calendar_title_hint)) },
                         singleLine = true,
-                        enabled = isCreating
+                        enabled = !isCreating
                     )
                 }
                 IconButton(
@@ -178,7 +178,7 @@ fun SubscriptionSettingsComposable(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
-            enabled = isCreating
+            enabled = !isCreating
         )
 
         Spacer(modifier = Modifier.padding(12.dp))
@@ -200,7 +200,7 @@ fun SubscriptionSettingsComposable(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
-            enabled = isCreating
+            enabled = !isCreating
         )
 
         Spacer(modifier = Modifier.padding(12.dp))
