@@ -74,12 +74,12 @@ class AddCalendarDetailsFragment: Fragment() {
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(viewLifecycleOwner)
             )
             setContent {
-                val url by subscriptionSettingsModel.url.observeAsState("")
-                val title by subscriptionSettingsModel.title.observeAsState("")
-                val color by subscriptionSettingsModel.color.observeAsState(0)
+                val url by subscriptionSettingsModel.url.observeAsState(null)
+                val title by subscriptionSettingsModel.title.observeAsState(null)
+                val color by subscriptionSettingsModel.color.observeAsState(null)
                 val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
-                val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
-                val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
+                val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState(null)
+                val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState(null)
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
