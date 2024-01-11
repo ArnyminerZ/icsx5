@@ -67,7 +67,10 @@ class SubscriptionSettingsFragment : Fragment() {
                     defaultAlarmMinutes = defaultAlarmMinutes,
                     defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
                     defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
-                    defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) }
+                    defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) },
+                    // TODO: Complete with some valid state
+                    isCreating = false,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
@@ -88,10 +91,10 @@ fun SubscriptionSettingsComposable(
     defaultAlarmMinutesChanged: (String) -> Unit,
     defaultAllDayAlarmMinutes: Long?,
     defaultAllDayAlarmMinutesChanged: (String) -> Unit,
+    isCreating: Boolean,
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        Modifier.fillMaxWidth()
-    ) {
+    Column(modifier) {
 
         // Title
         Text(
@@ -120,6 +123,7 @@ fun SubscriptionSettingsComposable(
                         onValueChange = titleChanged,
                         label = { Text(stringResource(R.string.add_calendar_title_hint)) },
                         singleLine = true,
+                        enabled = isCreating
                     )
                 }
                 IconButton(
@@ -173,7 +177,8 @@ fun SubscriptionSettingsComposable(
             label = { Text(stringResource(R.string.default_alarm_dialog_hint)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isCreating
         )
 
         Spacer(modifier = Modifier.padding(12.dp))
@@ -194,7 +199,8 @@ fun SubscriptionSettingsComposable(
             label = { Text(stringResource(R.string.default_alarm_dialog_hint)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isCreating
         )
 
         Spacer(modifier = Modifier.padding(12.dp))
