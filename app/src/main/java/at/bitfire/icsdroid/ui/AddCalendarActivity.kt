@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -15,10 +16,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -36,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import at.bitfire.icsdroid.Constants
 import at.bitfire.icsdroid.HttpClient
@@ -43,6 +48,7 @@ import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.calendar.LocalCalendar
 import at.bitfire.icsdroid.model.CredentialsModel
+import at.bitfire.icsdroid.model.SubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
 import com.google.accompanist.themeadapter.material.MdcTheme
@@ -62,6 +68,7 @@ class AddCalendarActivity : AppCompatActivity() {
     private val subscriptionSettingsModel by viewModels<SubscriptionSettingsModel>()
     private val credentialsModel by viewModels<CredentialsModel>()
     private val validationModel by viewModels<ValidationModel>()
+    private val subscriptionModel by viewModels<SubscriptionModel>()
 
     private val pickFile =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
@@ -74,6 +81,11 @@ class AddCalendarActivity : AppCompatActivity() {
 
                 subscriptionSettingsModel.url.value = uri.toString()
             }
+        }
+
+    private val colorPickerContract =
+        registerForActivityResult(ColorPickerActivity.Contract()) { color ->
+            subscriptionSettingsModel.color.value = color
         }
 
 
@@ -94,6 +106,18 @@ class AddCalendarActivity : AppCompatActivity() {
             }
         }
 
+        subscriptionModel.success.observe(this) { success ->
+            if (success) {
+                // success, show notification and close activity
+                Toast.makeText(this, getString(R.string.add_calendar_created), Toast.LENGTH_LONG).show()
+
+                finish()
+            }
+        }
+        subscriptionModel.errorMessage.observe(this) { message ->
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+
         setContent {
             MdcTheme {
                 val scope = rememberCoroutineScope()
@@ -102,15 +126,25 @@ class AddCalendarActivity : AppCompatActivity() {
                 val url: String? by subscriptionSettingsModel.url.observeAsState(null)
                 val urlError: String? by subscriptionSettingsModel.urlError.observeAsState(null)
                 val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(false)
+                val title by subscriptionSettingsModel.title.observeAsState(null)
+                val color by subscriptionSettingsModel.color.observeAsState(null)
+                val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
+                val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState(null)
+                val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState(null)
+
                 val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)
                 val username: String? by credentialsModel.username.observeAsState(null)
                 val password: String? by credentialsModel.password.observeAsState(null)
                 val isInsecure: Boolean by credentialsModel.isInsecure.observeAsState(false)
+
                 val isVerifyingUrl: Boolean by validationModel.isVerifyingUrl.observeAsState(false)
                 val validationResult: ResourceInfo? by validationModel.result.observeAsState(null)
 
+                val isCreating: Boolean by subscriptionModel.isCreating.observeAsState(false)
+
                 var showNextButton by remember { mutableStateOf(false) }
 
+                // Receive updates for the URL introduction page
                 LaunchedEffect(url, requiresAuth, username, password, isVerifyingUrl) {
                     if (isVerifyingUrl) {
                         showNextButton = true
@@ -126,6 +160,11 @@ class AddCalendarActivity : AppCompatActivity() {
                     showNextButton = uri != null && authOK
                 }
 
+                // Receive updates for the Details page
+                LaunchedEffect(title, color, ignoreAlerts, defaultAlarmMinutes, defaultAllDayAlarmMinutes) {
+                    showNextButton = !subscriptionSettingsModel.title.value.isNullOrBlank()
+                }
+
                 LaunchedEffect(validationResult) {
                     Log.i("AddCalendarActivity", "Validation result updated: $validationResult")
                     if (validationResult == null || validationResult?.exception != null) return@LaunchedEffect
@@ -137,16 +176,20 @@ class AddCalendarActivity : AppCompatActivity() {
 
                     if (subscriptionSettingsModel.color.value == null)
                         subscriptionSettingsModel.color.value =
-                            info.calendarColor ?: ContextCompat.getColor(this@AddCalendarActivity, R.color.lightblue)
+                            info.calendarColor ?: ContextCompat.getColor(
+                                this@AddCalendarActivity,
+                                R.color.lightblue
+                            )
 
                     if (subscriptionSettingsModel.title.value.isNullOrBlank())
-                        subscriptionSettingsModel.title.value = info.calendarName ?: info.uri.toString()
+                        subscriptionSettingsModel.title.value =
+                            info.calendarName ?: info.uri.toString()
 
                     scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
 
                 Scaffold(
-                    topBar = { TopAppBar(pagerState, showNextButton) }
+                    topBar = { TopAppBar(pagerState, showNextButton, isVerifyingUrl, isCreating) }
                 ) { paddingValues ->
                     HorizontalPager(
                         state = pagerState,
@@ -174,6 +217,33 @@ class AddCalendarActivity : AppCompatActivity() {
                                 onPickFileRequested = { pickFile.launch(arrayOf("text/calendar")) },
                                 onSubmit = { onNextRequested(1) }
                             )
+
+                            1 -> SubscriptionSettingsComposable(
+                                url = url,
+                                title = title,
+                                titleChanged = subscriptionSettingsModel.title::setValue,
+                                color = color,
+                                colorIconClicked = { colorPickerContract.launch(color) },
+                                ignoreAlerts = ignoreAlerts,
+                                ignoreAlertsChanged = subscriptionSettingsModel.ignoreAlerts::setValue,
+                                defaultAlarmMinutes = defaultAlarmMinutes,
+                                defaultAlarmMinutesChanged = {
+                                    subscriptionSettingsModel.defaultAlarmMinutes.postValue(
+                                        it.toLongOrNull()
+                                    )
+                                },
+                                defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
+                                defaultAllDayAlarmMinutesChanged = {
+                                    subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(
+                                        it.toLongOrNull()
+                                    )
+                                },
+                                isCreating = isCreating,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(16.dp)
+                            )
                         }
                     }
                 }
@@ -193,7 +263,12 @@ class AddCalendarActivity : AppCompatActivity() {
 
 
     @Composable
-    private fun TopAppBar(pagerState: PagerState, showNextButton: Boolean) {
+    private fun TopAppBar(
+        pagerState: PagerState,
+        showNextButton: Boolean,
+        isVerifyingUrl: Boolean,
+        isCreating: Boolean
+    ) {
         val scope = rememberCoroutineScope()
         androidx.compose.material.TopAppBar(
             navigationIcon = {
@@ -211,7 +286,10 @@ class AddCalendarActivity : AppCompatActivity() {
             title = { Text(text = stringResource(R.string.activity_add_calendar)) },
             actions = {
                 AnimatedVisibility(visible = showNextButton) {
-                    IconButton(onClick = { onNextRequested(pagerState.currentPage) }) {
+                    IconButton(
+                        onClick = { onNextRequested(pagerState.currentPage) },
+                        enabled = !isVerifyingUrl && !isCreating
+                    ) {
                         Icon(Icons.Filled.ArrowForward, null)
                     }
                 }
@@ -243,7 +321,7 @@ class AddCalendarActivity : AppCompatActivity() {
             }
             // Second page (details and confirm)
             1 -> {
-                // TODO
+                subscriptionModel.create(subscriptionSettingsModel, credentialsModel)
             }
         }
     }
