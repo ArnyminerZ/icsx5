@@ -5,6 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 
 @Composable
@@ -13,7 +14,8 @@ fun AppTheme(content: @Composable () -> Unit) {
         colors = MaterialTheme.colors.copy(
             primary = colorPrimary,
             primaryVariant = colorPrimaryDark,
-            secondary = colorSecondary
+            secondary = colorSecondary,
+            onSecondary = Color.White
         ),
         content = content
     )
