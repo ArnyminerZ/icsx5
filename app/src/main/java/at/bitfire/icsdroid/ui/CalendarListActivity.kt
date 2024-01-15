@@ -46,6 +46,7 @@ import at.bitfire.icsdroid.db.AppDatabase
 import at.bitfire.icsdroid.ui.dialog.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.list.CalendarListItem
 import at.bitfire.icsdroid.ui.reusable.ActionCard
+import at.bitfire.icsdroid.ui.theme.setContentThemed
 import com.google.accompanist.themeadapter.material.MdcTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,35 +100,33 @@ class CalendarListActivity: AppCompatActivity() {
                 .load(StartupFragment::class.java)
                 .forEach { it.initialize(this) }
 
-        setContent {
-            MdcTheme {
-                Scaffold(
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = {
-                                // Launch the Subscription add Activity
-                                startActivity(Intent(this, AddCalendarActivity::class.java))
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = stringResource(R.string.activity_add_calendar)
-                            )
+        setContentThemed {
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            // Launch the Subscription add Activity
+                            startActivity(Intent(this, AddCalendarActivity::class.java))
                         }
-                    },
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(stringResource(R.string.title_activity_calendar_list))
-                            },
-                            actions = {
-                                ActionOverflowMenu()
-                            }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = stringResource(R.string.activity_add_calendar)
                         )
                     }
-                ) { paddingValues ->
-                    ActivityContent(paddingValues)
+                },
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(stringResource(R.string.title_activity_calendar_list))
+                        },
+                        actions = {
+                            ActionOverflowMenu()
+                        }
+                    )
                 }
+            ) { paddingValues ->
+                ActivityContent(paddingValues)
             }
         }
     }

@@ -39,6 +39,7 @@ import androidx.fragment.app.activityViewModels
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.ui.reusable.SwitchSetting
+import at.bitfire.icsdroid.ui.theme.setContentThemed
 
 class SubscriptionSettingsFragment : Fragment() {
 
@@ -49,7 +50,7 @@ class SubscriptionSettingsFragment : Fragment() {
             model.color.value = color
         }
         return ComposeView(requireActivity()).apply {
-            setContent {
+            setContentThemed {
                 val url by model.url.observeAsState("")
                 val title by model.title.observeAsState("")
                 val color by model.color.observeAsState(0)

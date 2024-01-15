@@ -17,6 +17,7 @@ import androidx.core.app.ShareCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import at.bitfire.icsdroid.R
+import at.bitfire.icsdroid.ui.theme.setContentThemed
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -46,7 +47,7 @@ class AlertFragment: DialogFragment() {
         val dialog = Dialog(requireContext())
         dialog.setContentView(
             ComposeView(requireContext()).apply {
-                setContent {
+                setContentThemed {
                     AlertFragmentDialog(message, throwable) { dismiss() }
                 }
             }
