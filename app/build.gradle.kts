@@ -149,7 +149,7 @@ dependencies {
     //noinspection GradleDependency
     implementation("commons-io:commons-io:2.6")
     //noinspection GradleDependency
-    implementation("org.apache.commons:commons-lang3:3.8.1")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
 
     // Room Database
     implementation("androidx.room:room-ktx:${room}")
