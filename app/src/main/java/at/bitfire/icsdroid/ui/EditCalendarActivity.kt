@@ -4,7 +4,9 @@
 
 package at.bitfire.icsdroid.ui
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -13,20 +15,29 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
-import at.bitfire.icsdroid.databinding.EditCalendarBinding
 import at.bitfire.icsdroid.db.dao.SubscriptionsDao
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
+import com.google.accompanist.themeadapter.material.MdcTheme
 
 class EditCalendarActivity: AppCompatActivity() {
 
@@ -39,6 +50,10 @@ class EditCalendarActivity: AppCompatActivity() {
     private val subscriptionSettingsModel by viewModels<SubscriptionSettingsModel>()
     private val credentialsModel by viewModels<CredentialsModel>()
 
+    private val colorPickerContract = registerForActivityResult(ColorPickerActivity.Contract()) { color ->
+        subscriptionSettingsModel.color.value = color
+    }
+
     private val model by viewModels<EditSubscriptionModel> {
         object: ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -48,9 +63,6 @@ class EditCalendarActivity: AppCompatActivity() {
             }
         }
     }
-
-    lateinit var binding: EditCalendarBinding
-
 
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
@@ -75,10 +87,6 @@ class EditCalendarActivity: AppCompatActivity() {
         ).forEach { element ->
             element.observe(this, invalidate)
         }
-
-        binding = DataBindingUtil.setContentView(this, R.layout.edit_calendar)
-        binding.lifecycleOwner = this
-        binding.model = model
 
         // handle status changes
         model.successMessage.observe(this) { message ->
@@ -108,6 +116,56 @@ class EditCalendarActivity: AppCompatActivity() {
         }
     }
 
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View =
+        ComposeView(this).apply {
+            setContent {
+                MdcTheme {
+                    Column(Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                    ) {
+                        val url by subscriptionSettingsModel.url.observeAsState("")
+                        val title by subscriptionSettingsModel.title.observeAsState("")
+                        val color by subscriptionSettingsModel.color.observeAsState(0)
+                        val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
+                        val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
+                        val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
+                        SubscriptionSettingsComposable(
+                            url = url,
+                            title = title,
+                            titleChanged = { subscriptionSettingsModel.title.postValue(it) },
+                            color = color,
+                            colorIconClicked = { colorPickerContract.launch(color) },
+                            ignoreAlerts = ignoreAlerts,
+                            ignoreAlertsChanged = { subscriptionSettingsModel.ignoreAlerts.postValue(it) },
+                            defaultAlarmMinutes = defaultAlarmMinutes,
+                            defaultAlarmMinutesChanged = { subscriptionSettingsModel.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
+                            defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
+                            defaultAllDayAlarmMinutesChanged = { subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) },
+                            // TODO: Complete with some valid state
+                            isCreating = false,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(false)
+                        val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)
+                        val username: String? by credentialsModel.username.observeAsState(null)
+                        val password: String? by credentialsModel.password.observeAsState(null)
+                        AnimatedVisibility(visible = supportsAuthentication) {
+                            LoginCredentialsComposable(
+                                requiresAuth,
+                                username,
+                                password,
+                                onRequiresAuthChange = credentialsModel.requiresAuth::setValue,
+                                onUsernameChange = credentialsModel.username::setValue,
+                                onPasswordChange = credentialsModel.password::setValue
+                            )
+                        }
+
+                    }
+                }
+            }
+        }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_calendar_activity, menu)
         return true
@@ -122,14 +180,6 @@ class EditCalendarActivity: AppCompatActivity() {
         menu.findItem(R.id.cancel)
                 .setEnabled(dirty)
                 .setVisible(dirty)
-
-        // if local file, hide authentication fragment
-        val uri = model.subscriptionWithCredential.value?.subscription?.url
-        binding.credentials.visibility =
-            if (uri != null && HttpUtils.supportsAuthentication(uri))
-                View.VISIBLE
-            else
-                View.GONE
 
         val titleOK = !subscriptionSettingsModel.title.value.isNullOrBlank()
         val authOK = credentialsModel.run {
