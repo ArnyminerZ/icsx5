@@ -146,7 +146,8 @@ dependencies {
     androidTestImplementation(okHttpBom)
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:okhttp-brotli")
-    implementation("com.squareup.okhttp3:okhttp-coroutines")
+    // FIXME - Add when OkHttp 5.0.0 is stable
+    // implementation("com.squareup.okhttp3:okhttp-coroutines")
 
     // latest commons that don"t require Java 8
     //noinspection GradleDependency
