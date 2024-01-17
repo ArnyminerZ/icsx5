@@ -12,6 +12,8 @@ import kotlin.coroutines.resumeWithException
  * Executes the call suspendfully.
  *
  * FIXME - Should be removed and replaced with the official function when 5.0.0 stable is released.
+ *
+ * @see <a href="https://github.com/square/okhttp/blob/parent-5.0.0-alpha.12/okhttp-coroutines/src/jvmMain/kotlin/okhttp3/JvmCallExtensions.kt">Source</a>
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun Call.executeAsync(): Response = suspendCancellableCoroutine { continuation ->
