@@ -106,7 +106,7 @@ configurations {
 dependencies {
     val aboutLibsVersion: String by rootProject.extra
     val composeBomVersion = "2023.10.01"   // https://developer.android.com/jetpack/compose/bom
-    val okhttp = "5.0.0-alpha.11"
+    val okhttp = "5.0.0-alpha.12"
     val room = "2.6.1"
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
