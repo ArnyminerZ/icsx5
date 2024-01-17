@@ -147,7 +147,7 @@ dependencies {
 
     // latest commons that don"t require Java 8
     //noinspection GradleDependency
-    implementation("commons-io:commons-io:2.6")
+    implementation("commons-io:commons-io:2.15.1")
     //noinspection GradleDependency
     implementation("org.apache.commons:commons-lang3:3.8.1")
 
