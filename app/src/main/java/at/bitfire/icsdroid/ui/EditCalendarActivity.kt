@@ -4,14 +4,9 @@
 
 package at.bitfire.icsdroid.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
-import androidx.activity.addCallback
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,15 +16,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.bitfire.icsdroid.R
@@ -54,6 +62,8 @@ class EditCalendarActivity: AppCompatActivity() {
         subscriptionSettingsModel.color.value = color
     }
 
+    private lateinit var inputValid: LiveData<Boolean>
+
     private val model by viewModels<EditSubscriptionModel> {
         object: ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -72,22 +82,6 @@ class EditCalendarActivity: AppCompatActivity() {
                 onSubscriptionLoaded(data)
         }
 
-        val invalidate = Observer<Any?> {
-            invalidateOptionsMenu()
-        }
-        arrayOf(
-            subscriptionSettingsModel.title,
-            subscriptionSettingsModel.color,
-            subscriptionSettingsModel.ignoreAlerts,
-            subscriptionSettingsModel.defaultAlarmMinutes,
-            subscriptionSettingsModel.defaultAllDayAlarmMinutes,
-            credentialsModel.requiresAuth,
-            credentialsModel.username,
-            credentialsModel.password
-        ).forEach { element ->
-            element.observe(this, invalidate)
-        }
-
         // handle status changes
         model.successMessage.observe(this) { message ->
             if (message != null) {
@@ -103,33 +97,43 @@ class EditCalendarActivity: AppCompatActivity() {
                     .show(supportFragmentManager, null)
             }
 
-        onBackPressedDispatcher.addCallback {
-            if (dirty()) {
-                // If the form is dirty, warn the user about losing changes
-                supportFragmentManager.beginTransaction()
-                    .add(SaveDismissDialogFragment(), null)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .commit()
-            } else
-                // Otherwise, simply finish the activity
-                finish()
+        inputValid = object : MediatorLiveData<Boolean>() {
+            init {
+                addSource(subscriptionSettingsModel.title) { validate() }
+                addSource(credentialsModel.requiresAuth) { validate() }
+                addSource(credentialsModel.username) { validate() }
+                addSource(credentialsModel.password) { validate() }
+            }
+            fun validate() {
+                val titleOK = !subscriptionSettingsModel.title.value.isNullOrBlank()
+                val authOK = credentialsModel.run {
+                    if (requiresAuth.value == true)
+                        username.value != null && password.value != null
+                    else
+                        true
+                }
+                value = titleOK && authOK
+            }
         }
-    }
 
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View =
-        ComposeView(this).apply {
-            setContent {
-                MdcTheme {
-                    Column(Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
+        setContent {
+            MdcTheme {
+                val url by subscriptionSettingsModel.url.observeAsState("")
+                val title by subscriptionSettingsModel.title.observeAsState("")
+                val color by subscriptionSettingsModel.color.observeAsState(0)
+                val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
+                val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
+                val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
+                val inputValid by inputValid.observeAsState(false)
+                Scaffold(
+                    topBar = { AppBarComposable(inputValid) }
+                ) { paddingValues ->
+                    Column(
+                        Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(paddingValues)
+                            .padding(16.dp)
                     ) {
-                        val url by subscriptionSettingsModel.url.observeAsState("")
-                        val title by subscriptionSettingsModel.title.observeAsState("")
-                        val color by subscriptionSettingsModel.color.observeAsState(0)
-                        val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
-                        val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
-                        val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
                         SubscriptionSettingsComposable(
                             url = url,
                             title = title,
@@ -139,14 +143,24 @@ class EditCalendarActivity: AppCompatActivity() {
                             ignoreAlerts = ignoreAlerts,
                             ignoreAlertsChanged = { subscriptionSettingsModel.ignoreAlerts.postValue(it) },
                             defaultAlarmMinutes = defaultAlarmMinutes,
-                            defaultAlarmMinutesChanged = { subscriptionSettingsModel.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
+                            defaultAlarmMinutesChanged = {
+                                subscriptionSettingsModel.defaultAlarmMinutes.postValue(
+                                    it.toLongOrNull()
+                                )
+                            },
                             defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
-                            defaultAllDayAlarmMinutesChanged = { subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) },
+                            defaultAllDayAlarmMinutesChanged = {
+                                subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(
+                                    it.toLongOrNull()
+                                )
+                            },
                             // TODO: Complete with some valid state
                             isCreating = false,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(false)
+                        val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(
+                            false
+                        )
                         val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)
                         val username: String? by credentialsModel.username.observeAsState(null)
                         val password: String? by credentialsModel.password.observeAsState(null)
@@ -165,34 +179,53 @@ class EditCalendarActivity: AppCompatActivity() {
                 }
             }
         }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.edit_calendar_activity, menu)
-        return true
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val dirty = dirty()
-        menu.findItem(R.id.delete)
-                .setEnabled(!dirty)
-                .setVisible(!dirty)
-
-        menu.findItem(R.id.cancel)
-                .setEnabled(dirty)
-                .setVisible(dirty)
-
-        val titleOK = !subscriptionSettingsModel.title.value.isNullOrBlank()
-        val authOK = credentialsModel.run {
-            if (requiresAuth.value == true)
-                username.value != null && password.value != null
-            else
-                true
-        }
-        menu.findItem(R.id.save)
-                .setEnabled(dirty && titleOK && authOK)
-                .setVisible(dirty && titleOK && authOK)
-        return true
+    @Composable
+    private fun AppBarComposable(valid: Boolean) {
+        TopAppBar(
+            navigationIcon = {
+                IconButton(
+                    onClick = {
+                        if (dirty()) {
+                            // If the form is dirty, warn the user about losing changes
+                            supportFragmentManager.beginTransaction()
+                                .add(SaveDismissDialogFragment(), null)
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .commit()
+                        } else
+                        // Otherwise, simply finish the activity
+                            finish()
+                    }
+                ) {
+                    Icon(Icons.Filled.ArrowBack, null)
+                }
+            },
+            title = { Text(text = stringResource(R.string.activity_edit_calendar)) },
+            actions = {
+                IconButton(onClick = { onShare() }) {
+                    Icon(
+                        Icons.Filled.Share,
+                        stringResource(R.string.edit_calendar_send_url)
+                    )
+                }
+                IconButton(onClick = { onAskDelete() }) {
+                    Icon(Icons.Filled.Delete, stringResource(R.string.edit_calendar_delete))
+                }
+                AnimatedVisibility(visible = valid) {
+                    IconButton(onClick = { onSave() }) {
+                        Icon(Icons.Filled.Check, stringResource(R.string.edit_calendar_save))
+                    }
+                }
+            }
+        )
     }
+
+
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.edit_calendar_activity, menu)
+//        return true
+//    }
 
     private fun onSubscriptionLoaded(subscriptionWithCredential: SubscriptionsDao.SubscriptionWithCredential) {
         val subscription = subscriptionWithCredential.subscription
@@ -231,11 +264,9 @@ class EditCalendarActivity: AppCompatActivity() {
 
     /* user actions */
 
-    fun onSave(item: MenuItem?) {
-        model.updateSubscription(subscriptionSettingsModel, credentialsModel)
-    }
+    fun onSave() = model.updateSubscription(subscriptionSettingsModel, credentialsModel)
 
-    fun onAskDelete(item: MenuItem) {
+    fun onAskDelete() {
         supportFragmentManager.beginTransaction()
             .add(DeleteDialogFragment(), null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -246,11 +277,11 @@ class EditCalendarActivity: AppCompatActivity() {
         model.removeSubscription()
     }
 
-    fun onCancel(item: MenuItem?) {
+    fun onCancel() {
         finish()
     }
 
-    fun onShare(item: MenuItem) {
+    fun onShare() {
         model.subscriptionWithCredential.value?.let { (subscription, _) ->
             ShareCompat.IntentBuilder(this)
                     .setSubject(subscription.displayName)
@@ -261,8 +292,7 @@ class EditCalendarActivity: AppCompatActivity() {
         }
     }
 
-    //TODO: Get rid of dirty model mechanism
-    private fun dirty(): Boolean = true
+    private fun dirty(): Boolean = subscriptionSettingsModel.dirty() || credentialsModel.dirty()
 
     /** "Really delete?" dialog */
     class DeleteDialogFragment: DialogFragment() {
@@ -289,14 +319,19 @@ class EditCalendarActivity: AppCompatActivity() {
                 .setTitle(R.string.edit_calendar_unsaved_changes)
                 .setPositiveButton(R.string.edit_calendar_save) { dialog, _ ->
                     dialog.dismiss()
-                    (activity as? EditCalendarActivity)?.onSave(null)
+                    (activity as? EditCalendarActivity)?.onSave()
                 }
                 .setNegativeButton(R.string.edit_calendar_dismiss) { dialog, _ ->
                     dialog.dismiss()
-                    (activity as? EditCalendarActivity)?.onCancel(null)
+                    (activity as? EditCalendarActivity)?.onCancel()
                 }
                 .create()
 
     }
 
+    @Preview
+    @Composable
+    fun TopBarComposable_Preview() {
+        AppBarComposable(true)
+    }
 }

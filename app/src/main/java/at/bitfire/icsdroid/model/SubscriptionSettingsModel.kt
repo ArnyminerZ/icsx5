@@ -28,4 +28,7 @@ class SubscriptionSettingsModel : ViewModel() {
             value = HttpUtils.supportsAuthentication(uri)
         }
     }
+
+    // TODO: We still need the dirty model mechanism find a nice solution
+    fun dirty() = false
 }

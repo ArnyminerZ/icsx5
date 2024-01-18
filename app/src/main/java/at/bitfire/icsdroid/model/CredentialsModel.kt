@@ -9,4 +9,7 @@ class CredentialsModel : ViewModel() {
     val password = MutableLiveData("")
 
     val isInsecure = MutableLiveData(false)
+
+    // TODO: We still need the dirty model mechanism find a nice solution
+    fun dirty(): Boolean = false
 }
