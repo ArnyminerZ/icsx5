@@ -38,10 +38,13 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.db.dao.SubscriptionsDao
+import at.bitfire.icsdroid.db.entity.Credential
+import at.bitfire.icsdroid.db.entity.Subscription
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
@@ -56,13 +59,16 @@ class EditCalendarActivity: AppCompatActivity() {
     }
 
     private val subscriptionSettingsModel by viewModels<SubscriptionSettingsModel>()
+    private var initialSubscription: Subscription? = null
     private val credentialsModel by viewModels<CredentialsModel>()
+    private var initialCredentials: Credential? = null
 
     private val colorPickerContract = registerForActivityResult(ColorPickerActivity.Contract()) { color ->
         subscriptionSettingsModel.color.value = color
     }
 
     private lateinit var inputValid: LiveData<Boolean>
+    private lateinit var modelsDirty: MutableLiveData<Boolean>
 
     private val model by viewModels<EditSubscriptionModel> {
         object: ViewModelProvider.Factory {
@@ -77,6 +83,7 @@ class EditCalendarActivity: AppCompatActivity() {
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
 
+        // Save model instance states
         model.subscriptionWithCredential.observe(this) { data ->
             if (data != null)
                 onSubscriptionLoaded(data)
@@ -97,6 +104,26 @@ class EditCalendarActivity: AppCompatActivity() {
                     .show(supportFragmentManager, null)
             }
 
+        // Whether unsaved changes exist
+        modelsDirty = object : MediatorLiveData<Boolean>() {
+            init {
+                addSource(subscriptionSettingsModel.title) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.color) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.ignoreAlerts) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.defaultAlarmMinutes) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.defaultAllDayAlarmMinutes) { value = subscriptionDirty() }
+                addSource(credentialsModel.username) { value = credentialDirty() }
+                addSource(credentialsModel.password) { value = credentialDirty() }
+            }
+            fun subscriptionDirty() = initialSubscription?.let {
+                !subscriptionSettingsModel.equalsSubscription(it)
+            } ?: false
+            fun credentialDirty() = initialCredentials?.let {
+                !credentialsModel.equalsCredential(it)
+            } ?: false
+        }
+
+        // Whether made changes are legal
         inputValid = object : MediatorLiveData<Boolean>() {
             init {
                 addSource(subscriptionSettingsModel.title) { validate() }
@@ -125,8 +152,9 @@ class EditCalendarActivity: AppCompatActivity() {
                 val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
                 val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
                 val inputValid by inputValid.observeAsState(false)
+                val modelsDirty by modelsDirty.observeAsState(false)
                 Scaffold(
-                    topBar = { AppBarComposable(inputValid) }
+                    topBar = { AppBarComposable(inputValid, modelsDirty) }
                 ) { paddingValues ->
                     Column(
                         Modifier
@@ -182,12 +210,12 @@ class EditCalendarActivity: AppCompatActivity() {
     }
 
     @Composable
-    private fun AppBarComposable(valid: Boolean) {
+    private fun AppBarComposable(valid: Boolean, modelsDirty: Boolean) {
         TopAppBar(
             navigationIcon = {
                 IconButton(
                     onClick = {
-                        if (dirty()) {
+                        if (modelsDirty) {
                             // If the form is dirty, warn the user about losing changes
                             supportFragmentManager.beginTransaction()
                                 .add(SaveDismissDialogFragment(), null)
@@ -212,7 +240,7 @@ class EditCalendarActivity: AppCompatActivity() {
                 IconButton(onClick = { onAskDelete() }) {
                     Icon(Icons.Filled.Delete, stringResource(R.string.edit_calendar_delete))
                 }
-                AnimatedVisibility(visible = valid) {
+                AnimatedVisibility(visible = valid && modelsDirty) {
                     IconButton(onClick = { onSave() }) {
                         Icon(Icons.Filled.Check, stringResource(R.string.edit_calendar_save))
                     }
@@ -220,12 +248,6 @@ class EditCalendarActivity: AppCompatActivity() {
             }
         )
     }
-
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.edit_calendar_activity, menu)
-//        return true
-//    }
 
     private fun onSubscriptionLoaded(subscriptionWithCredential: SubscriptionsDao.SubscriptionWithCredential) {
         val subscription = subscriptionWithCredential.subscription
@@ -259,6 +281,10 @@ class EditCalendarActivity: AppCompatActivity() {
                 credentialsModel.password.value = password
             }
         }
+
+        // Save state of loaded models, before user makes changes
+        initialSubscription = subscription
+        initialCredentials = credential
     }
 
 
@@ -291,8 +317,6 @@ class EditCalendarActivity: AppCompatActivity() {
                     .startChooser()
         }
     }
-
-    private fun dirty(): Boolean = subscriptionSettingsModel.dirty() || credentialsModel.dirty()
 
     /** "Really delete?" dialog */
     class DeleteDialogFragment: DialogFragment() {
@@ -332,6 +356,6 @@ class EditCalendarActivity: AppCompatActivity() {
     @Preview
     @Composable
     fun TopBarComposable_Preview() {
-        AppBarComposable(true)
+        AppBarComposable(true, true)
     }
 }

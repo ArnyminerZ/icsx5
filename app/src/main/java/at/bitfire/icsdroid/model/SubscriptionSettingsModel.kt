@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import at.bitfire.icsdroid.HttpUtils
+import at.bitfire.icsdroid.db.entity.Subscription
 import java.net.URISyntaxException
 
 class SubscriptionSettingsModel : ViewModel() {
@@ -29,6 +30,11 @@ class SubscriptionSettingsModel : ViewModel() {
         }
     }
 
-    // TODO: We still need the dirty model mechanism find a nice solution
-    fun dirty() = false
+    fun equalsSubscription(subscription: Subscription) =
+        url.value == subscription.url.toString()
+                && title.value == subscription.displayName
+                && color.value == subscription.color
+                && ignoreAlerts.value == subscription.ignoreEmbeddedAlerts
+                && defaultAlarmMinutes.value == subscription.defaultAlarmMinutes
+                && defaultAllDayAlarmMinutes.value == subscription.defaultAllDayAlarmMinutes
 }
