@@ -16,10 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,6 +31,8 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -235,13 +239,32 @@ class EditCalendarActivity: AppCompatActivity() {
             },
             title = { Text(text = stringResource(R.string.activity_edit_calendar)) },
             actions = {
+                val openDeleteDialog = remember { mutableStateOf(false) }
+                if (openDeleteDialog.value)
+                    AlertDialog(
+                        onDismissRequest = { openDeleteDialog.value = false },
+                        text = { Text(stringResource(R.string.edit_calendar_really_delete)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                openDeleteDialog.value = false
+                                onDelete()
+                            }) { Text(stringResource(R.string.edit_calendar_delete)) }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                openDeleteDialog.value = false
+                            }) {
+                                Text(stringResource(R.string.edit_calendar_cancel))
+                            }
+                        }
+                    )
                 IconButton(onClick = { onShare() }) {
                     Icon(
                         Icons.Filled.Share,
                         stringResource(R.string.edit_calendar_send_url)
                     )
                 }
-                IconButton(onClick = { onAskDelete() }) {
+                IconButton(onClick = { openDeleteDialog.value = true }) {
                     Icon(Icons.Filled.Delete, stringResource(R.string.edit_calendar_delete))
                 }
                 AnimatedVisibility(visible = valid && modelsDirty) {
@@ -296,13 +319,6 @@ class EditCalendarActivity: AppCompatActivity() {
 
     fun onSave() = model.updateSubscription(subscriptionSettingsModel, credentialsModel)
 
-    private fun onAskDelete() {
-        supportFragmentManager.beginTransaction()
-            .add(DeleteDialogFragment(), null)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .commit()
-    }
-
     private fun onDelete() {
         model.removeSubscription()
     }
@@ -320,23 +336,6 @@ class EditCalendarActivity: AppCompatActivity() {
                     .setChooserTitle(R.string.edit_calendar_send_url)
                     .startChooser()
         }
-    }
-
-    /** "Really delete?" dialog */
-    class DeleteDialogFragment: DialogFragment() {
-
-        override fun onCreateDialog(savedInstanceState: Bundle?) =
-            AlertDialog.Builder(requireActivity())
-                .setMessage(R.string.edit_calendar_really_delete)
-                .setPositiveButton(R.string.edit_calendar_delete) { dialog, _ ->
-                    dialog.dismiss()
-                    (activity as EditCalendarActivity?)?.onDelete()
-                }
-                .setNegativeButton(R.string.edit_calendar_cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-
     }
 
     /** "Save or dismiss" dialog */
@@ -362,4 +361,5 @@ class EditCalendarActivity: AppCompatActivity() {
     fun TopBarComposable_Preview() {
         AppBarComposable(valid = true, modelsDirty = true)
     }
+
 }
