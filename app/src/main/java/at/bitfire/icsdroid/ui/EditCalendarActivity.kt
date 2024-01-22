@@ -99,13 +99,6 @@ class EditCalendarActivity: AppCompatActivity() {
             }
         }
 
-        // show error message from calling intent, if available
-        if (inState == null)
-            intent.getStringExtra(EXTRA_ERROR_MESSAGE)?.let { error ->
-                AlertFragment.create(error, intent.getSerializableExtra(EXTRA_THROWABLE) as? Throwable)
-                    .show(supportFragmentManager, null)
-            }
-
         // Whether unsaved changes exist
         modelsDirty = object : MediatorLiveData<Boolean>() {
             init {
@@ -125,7 +118,7 @@ class EditCalendarActivity: AppCompatActivity() {
             } ?: false
         }
 
-        // Whether made changes are legal
+        // Whether use made changes are legal
         inputValid = object : MediatorLiveData<Boolean>() {
             init {
                 addSource(subscriptionSettingsModel.title) { validate() }
@@ -147,6 +140,11 @@ class EditCalendarActivity: AppCompatActivity() {
 
         setContent {
             MdcTheme {
+                // show error message from calling intent, if available
+                if (inState == null)
+                    intent.getStringExtra(EXTRA_ERROR_MESSAGE)?.let { error ->
+                        AlertFragmentDialog(error, intent.getSerializableExtra(EXTRA_THROWABLE) as? Throwable) {}
+                    }
                 EditCalendarComposable()
             }
         }
@@ -300,7 +298,7 @@ class EditCalendarActivity: AppCompatActivity() {
             }
         }
 
-        // Save state of loaded models, before user makes changes
+        // Save state, before user makes changes
         initialSubscription = subscription
         initialCredentials = credential
     }
