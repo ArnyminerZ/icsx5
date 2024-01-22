@@ -145,65 +145,69 @@ class EditCalendarActivity: AppCompatActivity() {
 
         setContent {
             MdcTheme {
-                val url by subscriptionSettingsModel.url.observeAsState("")
-                val title by subscriptionSettingsModel.title.observeAsState("")
-                val color by subscriptionSettingsModel.color.observeAsState(0)
-                val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
-                val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
-                val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
-                val inputValid by inputValid.observeAsState(false)
-                val modelsDirty by modelsDirty.observeAsState(false)
-                Scaffold(
-                    topBar = { AppBarComposable(inputValid, modelsDirty) }
-                ) { paddingValues ->
-                    Column(
-                        Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
-                            .padding(16.dp)
-                    ) {
-                        SubscriptionSettingsComposable(
-                            url = url,
-                            title = title,
-                            titleChanged = { subscriptionSettingsModel.title.postValue(it) },
-                            color = color,
-                            colorIconClicked = { colorPickerContract.launch(color) },
-                            ignoreAlerts = ignoreAlerts,
-                            ignoreAlertsChanged = { subscriptionSettingsModel.ignoreAlerts.postValue(it) },
-                            defaultAlarmMinutes = defaultAlarmMinutes,
-                            defaultAlarmMinutesChanged = {
-                                subscriptionSettingsModel.defaultAlarmMinutes.postValue(
-                                    it.toLongOrNull()
-                                )
-                            },
-                            defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
-                            defaultAllDayAlarmMinutesChanged = {
-                                subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(
-                                    it.toLongOrNull()
-                                )
-                            },
-                            // TODO: Complete with some valid state
-                            isCreating = false,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(
-                            false
-                        )
-                        val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)
-                        val username: String? by credentialsModel.username.observeAsState(null)
-                        val password: String? by credentialsModel.password.observeAsState(null)
-                        AnimatedVisibility(visible = supportsAuthentication) {
-                            LoginCredentialsComposable(
-                                requiresAuth,
-                                username,
-                                password,
-                                onRequiresAuthChange = credentialsModel.requiresAuth::setValue,
-                                onUsernameChange = credentialsModel.username::setValue,
-                                onPasswordChange = credentialsModel.password::setValue
-                            )
-                        }
+                EditCalendarComposable()
+            }
+        }
+    }
 
-                    }
+    @Composable
+    private fun EditCalendarComposable() {
+        val url by subscriptionSettingsModel.url.observeAsState("")
+        val title by subscriptionSettingsModel.title.observeAsState("")
+        val color by subscriptionSettingsModel.color.observeAsState(0)
+        val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
+        val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState()
+        val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState()
+        val inputValid by inputValid.observeAsState(false)
+        val modelsDirty by modelsDirty.observeAsState(false)
+        Scaffold(
+            topBar = { AppBarComposable(inputValid, modelsDirty) }
+        ) { paddingValues ->
+            Column(
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                SubscriptionSettingsComposable(
+                    url = url,
+                    title = title,
+                    titleChanged = { subscriptionSettingsModel.title.postValue(it) },
+                    color = color,
+                    colorIconClicked = { colorPickerContract.launch(color) },
+                    ignoreAlerts = ignoreAlerts,
+                    ignoreAlertsChanged = { subscriptionSettingsModel.ignoreAlerts.postValue(it) },
+                    defaultAlarmMinutes = defaultAlarmMinutes,
+                    defaultAlarmMinutesChanged = {
+                        subscriptionSettingsModel.defaultAlarmMinutes.postValue(
+                            it.toLongOrNull()
+                        )
+                    },
+                    defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
+                    defaultAllDayAlarmMinutesChanged = {
+                        subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(
+                            it.toLongOrNull()
+                        )
+                    },
+                    // TODO: Complete with some valid state
+                    isCreating = false,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(
+                    false
+                )
+                val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)
+                val username: String? by credentialsModel.username.observeAsState(null)
+                val password: String? by credentialsModel.password.observeAsState(null)
+                AnimatedVisibility(visible = supportsAuthentication) {
+                    LoginCredentialsComposable(
+                        requiresAuth,
+                        username,
+                        password,
+                        onRequiresAuthChange = credentialsModel.requiresAuth::setValue,
+                        onUsernameChange = credentialsModel.username::setValue,
+                        onPasswordChange = credentialsModel.password::setValue
+                    )
                 }
             }
         }
@@ -292,7 +296,7 @@ class EditCalendarActivity: AppCompatActivity() {
 
     fun onSave() = model.updateSubscription(subscriptionSettingsModel, credentialsModel)
 
-    fun onAskDelete() {
+    private fun onAskDelete() {
         supportFragmentManager.beginTransaction()
             .add(DeleteDialogFragment(), null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -307,7 +311,7 @@ class EditCalendarActivity: AppCompatActivity() {
         finish()
     }
 
-    fun onShare() {
+    private fun onShare() {
         model.subscriptionWithCredential.value?.let { (subscription, _) ->
             ShareCompat.IntentBuilder(this)
                     .setSubject(subscription.displayName)
@@ -356,6 +360,6 @@ class EditCalendarActivity: AppCompatActivity() {
     @Preview
     @Composable
     fun TopBarComposable_Preview() {
-        AppBarComposable(true, true)
+        AppBarComposable(valid = true, modelsDirty = true)
     }
 }
