@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -217,44 +218,22 @@ class EditCalendarActivity: AppCompatActivity() {
     @Composable
     private fun AppBarComposable(valid: Boolean, modelsDirty: Boolean) {
         val openDeleteDialog = remember { mutableStateOf(false) }
-        if (openDeleteDialog.value)
-            AlertDialog(
-                onDismissRequest = { openDeleteDialog.value = false },
-                text = { Text(stringResource(R.string.edit_calendar_really_delete)) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        openDeleteDialog.value = false
-                        onDelete()
-                    }) { Text(stringResource(R.string.edit_calendar_delete)) }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        openDeleteDialog.value = false
-                    }) {
-                        Text(stringResource(R.string.edit_calendar_cancel))
-                    }
-                }
-            )
+        AlertDialogBox(
+            isOpen = openDeleteDialog,
+            message = stringResource(R.string.edit_calendar_really_delete),
+            confirmButtonText = stringResource(R.string.edit_calendar_delete),
+            confirmButtonCallback = { onDelete() },
+            dismissButtonText = stringResource(R.string.edit_calendar_cancel)
+        )
         val openSaveDismissDialog = remember { mutableStateOf(false) }
-        if (openSaveDismissDialog.value)
-            AlertDialog(
-                onDismissRequest = { openSaveDismissDialog.value = false },
-                text = { Text(stringResource(R.string.edit_calendar_unsaved_changes)) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        openSaveDismissDialog.value = false
-                        onSave()
-                    }) { Text(stringResource(R.string.edit_calendar_save)) }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        openSaveDismissDialog.value = false
-                        finish()
-                    }) {
-                        Text(stringResource(R.string.edit_calendar_dismiss))
-                    }
-                }
-            )
+        AlertDialogBox(
+            isOpen = openSaveDismissDialog,
+            message = stringResource(R.string.edit_calendar_unsaved_changes),
+            confirmButtonText = stringResource(R.string.edit_calendar_save),
+            confirmButtonCallback = { onSave() },
+            dismissButtonText = stringResource(R.string.edit_calendar_dismiss),
+            dismissButtonCallback = { finish() }
+        )
         TopAppBar(
             navigationIcon = {
                 IconButton(
@@ -345,6 +324,35 @@ class EditCalendarActivity: AppCompatActivity() {
                     .startChooser()
         }
     }
+
+    @Composable
+    fun AlertDialogBox(
+        isOpen: MutableState<Boolean>,
+        message: String,
+        confirmButtonText: String,
+        confirmButtonCallback: () -> Unit = {},
+        dismissButtonText: String,
+        dismissButtonCallback: () -> Unit = {}
+    ) {
+        if (isOpen.value)
+            AlertDialog(
+                onDismissRequest = { isOpen.value = false },
+                text = { Text(message) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        isOpen.value = false
+                        confirmButtonCallback()
+                    }) { Text(confirmButtonText) }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        isOpen.value = false
+                        dismissButtonCallback()
+                    }) { Text(dismissButtonText) }
+                }
+            )
+    }
+
     @Preview
     @Composable
     fun TopBarComposable_Preview() {
