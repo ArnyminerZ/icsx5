@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -38,8 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -219,18 +216,52 @@ class EditCalendarActivity: AppCompatActivity() {
 
     @Composable
     private fun AppBarComposable(valid: Boolean, modelsDirty: Boolean) {
+        val openDeleteDialog = remember { mutableStateOf(false) }
+        if (openDeleteDialog.value)
+            AlertDialog(
+                onDismissRequest = { openDeleteDialog.value = false },
+                text = { Text(stringResource(R.string.edit_calendar_really_delete)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        openDeleteDialog.value = false
+                        onDelete()
+                    }) { Text(stringResource(R.string.edit_calendar_delete)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        openDeleteDialog.value = false
+                    }) {
+                        Text(stringResource(R.string.edit_calendar_cancel))
+                    }
+                }
+            )
+        val openSaveDismissDialog = remember { mutableStateOf(false) }
+        if (openSaveDismissDialog.value)
+            AlertDialog(
+                onDismissRequest = { openSaveDismissDialog.value = false },
+                text = { Text(stringResource(R.string.edit_calendar_unsaved_changes)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        openSaveDismissDialog.value = false
+                        onSave()
+                    }) { Text(stringResource(R.string.edit_calendar_save)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        openSaveDismissDialog.value = false
+                        finish()
+                    }) {
+                        Text(stringResource(R.string.edit_calendar_dismiss))
+                    }
+                }
+            )
         TopAppBar(
             navigationIcon = {
                 IconButton(
                     onClick = {
-                        if (modelsDirty) {
-                            // If the form is dirty, warn the user about losing changes
-                            supportFragmentManager.beginTransaction()
-                                .add(SaveDismissDialogFragment(), null)
-                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                                .commit()
-                        } else
-                        // Otherwise, simply finish the activity
+                        if (modelsDirty)
+                            openSaveDismissDialog.value = true
+                        else
                             finish()
                     }
                 ) {
@@ -239,25 +270,6 @@ class EditCalendarActivity: AppCompatActivity() {
             },
             title = { Text(text = stringResource(R.string.activity_edit_calendar)) },
             actions = {
-                val openDeleteDialog = remember { mutableStateOf(false) }
-                if (openDeleteDialog.value)
-                    AlertDialog(
-                        onDismissRequest = { openDeleteDialog.value = false },
-                        text = { Text(stringResource(R.string.edit_calendar_really_delete)) },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                openDeleteDialog.value = false
-                                onDelete()
-                            }) { Text(stringResource(R.string.edit_calendar_delete)) }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = {
-                                openDeleteDialog.value = false
-                            }) {
-                                Text(stringResource(R.string.edit_calendar_cancel))
-                            }
-                        }
-                    )
                 IconButton(onClick = { onShare() }) {
                     Icon(
                         Icons.Filled.Share,
@@ -323,10 +335,6 @@ class EditCalendarActivity: AppCompatActivity() {
         model.removeSubscription()
     }
 
-    fun onCancel() {
-        finish()
-    }
-
     private fun onShare() {
         model.subscriptionWithCredential.value?.let { (subscription, _) ->
             ShareCompat.IntentBuilder(this)
@@ -337,25 +345,6 @@ class EditCalendarActivity: AppCompatActivity() {
                     .startChooser()
         }
     }
-
-    /** "Save or dismiss" dialog */
-    class SaveDismissDialogFragment: DialogFragment() {
-
-        override fun onCreateDialog(savedInstanceState: Bundle?) =
-            AlertDialog.Builder(requireActivity())
-                .setTitle(R.string.edit_calendar_unsaved_changes)
-                .setPositiveButton(R.string.edit_calendar_save) { dialog, _ ->
-                    dialog.dismiss()
-                    (activity as? EditCalendarActivity)?.onSave()
-                }
-                .setNegativeButton(R.string.edit_calendar_dismiss) { dialog, _ ->
-                    dialog.dismiss()
-                    (activity as? EditCalendarActivity)?.onCancel()
-                }
-                .create()
-
-    }
-
     @Preview
     @Composable
     fun TopBarComposable_Preview() {
