@@ -69,8 +69,48 @@ class EditCalendarActivity: AppCompatActivity() {
         subscriptionSettingsModel.color.value = color
     }
 
-    private lateinit var inputValid: LiveData<Boolean>
-    private lateinit var modelsDirty: MutableLiveData<Boolean>
+    // Whether use made changes are legal
+    private val inputValid: LiveData<Boolean> by lazy {
+        object : MediatorLiveData<Boolean>() {
+            init {
+                addSource(subscriptionSettingsModel.title) { validate() }
+                addSource(credentialsModel.requiresAuth) { validate() }
+                addSource(credentialsModel.username) { validate() }
+                addSource(credentialsModel.password) { validate() }
+            }
+            fun validate() {
+                val titleOK = !subscriptionSettingsModel.title.value.isNullOrBlank()
+                val authOK = credentialsModel.run {
+                    if (requiresAuth.value == true)
+                        username.value != null && password.value != null
+                    else
+                        true
+                }
+                value = titleOK && authOK
+            }
+        }
+    }
+
+    // Whether unsaved changes exist
+    private val modelsDirty: MutableLiveData<Boolean> by lazy {
+        object : MediatorLiveData<Boolean>() {
+            init {
+                addSource(subscriptionSettingsModel.title) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.color) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.ignoreAlerts) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.defaultAlarmMinutes) { value = subscriptionDirty() }
+                addSource(subscriptionSettingsModel.defaultAllDayAlarmMinutes) { value = subscriptionDirty() }
+                addSource(credentialsModel.username) { value = credentialDirty() }
+                addSource(credentialsModel.password) { value = credentialDirty() }
+            }
+            fun subscriptionDirty() = initialSubscription?.let {
+                !subscriptionSettingsModel.equalsSubscription(it)
+            } ?: false
+            fun credentialDirty() = initialCredentials?.let {
+                !credentialsModel.equalsCredential(it)
+            } ?: false
+        }
+    }
 
     private val model by viewModels<EditSubscriptionModel> {
         object: ViewModelProvider.Factory {
@@ -96,45 +136,6 @@ class EditCalendarActivity: AppCompatActivity() {
             if (message != null) {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 finish()
-            }
-        }
-
-        // Whether unsaved changes exist
-        modelsDirty = object : MediatorLiveData<Boolean>() {
-            init {
-                addSource(subscriptionSettingsModel.title) { value = subscriptionDirty() }
-                addSource(subscriptionSettingsModel.color) { value = subscriptionDirty() }
-                addSource(subscriptionSettingsModel.ignoreAlerts) { value = subscriptionDirty() }
-                addSource(subscriptionSettingsModel.defaultAlarmMinutes) { value = subscriptionDirty() }
-                addSource(subscriptionSettingsModel.defaultAllDayAlarmMinutes) { value = subscriptionDirty() }
-                addSource(credentialsModel.username) { value = credentialDirty() }
-                addSource(credentialsModel.password) { value = credentialDirty() }
-            }
-            fun subscriptionDirty() = initialSubscription?.let {
-                !subscriptionSettingsModel.equalsSubscription(it)
-            } ?: false
-            fun credentialDirty() = initialCredentials?.let {
-                !credentialsModel.equalsCredential(it)
-            } ?: false
-        }
-
-        // Whether use made changes are legal
-        inputValid = object : MediatorLiveData<Boolean>() {
-            init {
-                addSource(subscriptionSettingsModel.title) { validate() }
-                addSource(credentialsModel.requiresAuth) { validate() }
-                addSource(credentialsModel.username) { validate() }
-                addSource(credentialsModel.password) { validate() }
-            }
-            fun validate() {
-                val titleOK = !subscriptionSettingsModel.title.value.isNullOrBlank()
-                val authOK = credentialsModel.run {
-                    if (requiresAuth.value == true)
-                        username.value != null && password.value != null
-                    else
-                        true
-                }
-                value = titleOK && authOK
             }
         }
 
