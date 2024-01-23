@@ -125,7 +125,7 @@ class EditCalendarActivity: AppCompatActivity() {
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
 
-        // Save model instance states
+        // Initialise view models and save their initial state
         model.subscriptionWithCredential.observe(this) { data ->
             if (data != null)
                 onSubscriptionLoaded(data)
@@ -150,6 +150,65 @@ class EditCalendarActivity: AppCompatActivity() {
             }
         }
     }
+
+    /**
+     * Initialise view models and remember their initial state
+     */
+    private fun onSubscriptionLoaded(subscriptionWithCredential: SubscriptionsDao.SubscriptionWithCredential) {
+        val subscription = subscriptionWithCredential.subscription
+
+        subscriptionSettingsModel.url.value = subscription.url.toString()
+        subscription.displayName.let {
+            subscriptionSettingsModel.title.value = it
+        }
+        subscription.color.let {
+            subscriptionSettingsModel.color.value = it
+        }
+        subscription.ignoreEmbeddedAlerts.let {
+            subscriptionSettingsModel.ignoreAlerts.postValue(it)
+        }
+        subscription.defaultAlarmMinutes.let {
+            subscriptionSettingsModel.defaultAlarmMinutes.postValue(it)
+        }
+        subscription.defaultAllDayAlarmMinutes.let {
+            subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(it)
+        }
+
+        val credential = subscriptionWithCredential.credential
+        val requiresAuth = credential != null
+        credentialsModel.requiresAuth.value = requiresAuth
+
+        if (credential != null) {
+            credential.username.let { username ->
+                credentialsModel.username.value = username
+            }
+            credential.password.let { password ->
+                credentialsModel.password.value = password
+            }
+        }
+
+        // Save state, before user makes changes
+        initialSubscription = subscription
+        initialCredentials = credential
+    }
+
+
+    /* user actions */
+
+    private fun onSave() = model.updateSubscription(subscriptionSettingsModel, credentialsModel)
+
+    private fun onDelete() = model.removeSubscription()
+
+    private fun onShare() = model.subscriptionWithCredential.value?.let { (subscription, _) ->
+        ShareCompat.IntentBuilder(this)
+            .setSubject(subscription.displayName)
+            .setText(subscription.url.toString())
+            .setType("text/plain")
+            .setChooserTitle(R.string.edit_calendar_send_url)
+            .startChooser()
+    }
+
+    /* Composables */
 
     @Composable
     private fun EditCalendarComposable() {
@@ -264,64 +323,6 @@ class EditCalendarActivity: AppCompatActivity() {
                 }
             }
         )
-    }
-
-    private fun onSubscriptionLoaded(subscriptionWithCredential: SubscriptionsDao.SubscriptionWithCredential) {
-        val subscription = subscriptionWithCredential.subscription
-
-        subscriptionSettingsModel.url.value = subscription.url.toString()
-        subscription.displayName.let {
-            subscriptionSettingsModel.title.value = it
-        }
-        subscription.color.let {
-            subscriptionSettingsModel.color.value = it
-        }
-        subscription.ignoreEmbeddedAlerts.let {
-            subscriptionSettingsModel.ignoreAlerts.postValue(it)
-        }
-        subscription.defaultAlarmMinutes.let {
-            subscriptionSettingsModel.defaultAlarmMinutes.postValue(it)
-        }
-        subscription.defaultAllDayAlarmMinutes.let {
-            subscriptionSettingsModel.defaultAllDayAlarmMinutes.postValue(it)
-        }
-
-        val credential = subscriptionWithCredential.credential
-        val requiresAuth = credential != null
-        credentialsModel.requiresAuth.value = requiresAuth
-
-        if (credential != null) {
-            credential.username.let { username ->
-                credentialsModel.username.value = username
-            }
-            credential.password.let { password ->
-                credentialsModel.password.value = password
-            }
-        }
-
-        // Save state, before user makes changes
-        initialSubscription = subscription
-        initialCredentials = credential
-    }
-
-
-    /* user actions */
-
-    fun onSave() = model.updateSubscription(subscriptionSettingsModel, credentialsModel)
-
-    private fun onDelete() {
-        model.removeSubscription()
-    }
-
-    private fun onShare() {
-        model.subscriptionWithCredential.value?.let { (subscription, _) ->
-            ShareCompat.IntentBuilder(this)
-                    .setSubject(subscription.displayName)
-                    .setText(subscription.url.toString())
-                    .setType("text/plain")
-                    .setChooserTitle(R.string.edit_calendar_send_url)
-                    .startChooser()
-        }
     }
 
     @Composable
