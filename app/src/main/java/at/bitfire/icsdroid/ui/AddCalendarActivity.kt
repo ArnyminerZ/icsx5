@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -50,6 +51,7 @@ import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.CreateSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
+import at.bitfire.icsdroid.ui.theme.md_theme_light_primary
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -174,10 +176,7 @@ class AddCalendarActivity : AppCompatActivity() {
 
                 if (subscriptionSettingsModel.color.value == null)
                     subscriptionSettingsModel.color.value =
-                        info.calendarColor ?: ContextCompat.getColor(
-                            this@AddCalendarActivity,
-                            R.color.lightblue
-                        )
+                        info.calendarColor ?: md_theme_light_primary.toArgb()
 
                 if (subscriptionSettingsModel.title.value.isNullOrBlank())
                     subscriptionSettingsModel.title.value =
