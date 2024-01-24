@@ -50,6 +50,7 @@ import at.bitfire.icsdroid.db.entity.Subscription
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
+import at.bitfire.icsdroid.ui.dialog.AlertFragmentDialog
 import com.google.accompanist.themeadapter.material.MdcTheme
 
 class EditCalendarActivity: AppCompatActivity() {

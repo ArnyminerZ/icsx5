@@ -2,7 +2,7 @@
  * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
  **************************************************************************************************/
 
-package at.bitfire.icsdroid.ui
+package at.bitfire.icsdroid.ui.dialog
 
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
