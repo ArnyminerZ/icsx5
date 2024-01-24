@@ -59,8 +59,6 @@ fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // TODO: Dark theme
-
     val context = LocalContext.current
 
     val colors = if (darkTheme)
