@@ -14,6 +14,7 @@ buildscript {
         classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath ("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion")
         classpath ("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${kotlinVersion}-${kspVersion}")
+        classpath ("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.23.3")
     }
 }
 
