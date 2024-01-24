@@ -68,7 +68,7 @@ fun AppTheme(
         colors = colors
     ) {
         LaunchedEffect(darkTheme) {
-            if (context is AppCompatActivity) {
+            (context as? AppCompatActivity)?.let { activity ->
                 val style = if (darkTheme)
                     SystemBarStyle.dark(
                         md_theme_dark_primaryContainer.toArgb()
@@ -78,13 +78,11 @@ fun AppTheme(
                         md_theme_light_surfaceTint.toArgb(),
                         md_theme_light_onBackground.toArgb()
                     )
-                context.enableEdgeToEdge(
+                activity.enableEdgeToEdge(
                     statusBarStyle = style,
                     navigationBarStyle = style
                 )
-            } else {
-                Log.e("AppTheme", "Context is not activity!")
-            }
+            } ?: Log.e("AppTheme", "Context is not activity!")
         }
 
         Box(
