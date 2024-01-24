@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
  * The behaviour after the user scrolls back is:
  * - If the pager is in the first page:
  *   [onBack] is called.
- * - Otherwise, the pager is moved to the previous page.
+ * - Otherwise, the pager is moved to the previous page, and [onPageChanged] is called.
  * This includes the predictive functionality for Android 14+.
  * It means that when the user starts to scroll back, the pager will show this action.
  */
@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 fun PagerPredictiveBackHandler(
     pagerState: PagerState,
     enabled: Boolean = true,
+    onPageChanged: ((page: Int) -> Unit)? = null,
     onBack: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -66,7 +67,10 @@ fun PagerPredictiveBackHandler(
                 lastProgress = 0f
                 val page = pagerState.settledPage
                 // If not on the first page, animate pager to the previous one
-                if (page > 0) scope.launch { pagerState.animateScrollToPage(page - 1) }
+                if (page > 0) {
+                    onPageChanged?.invoke(page - 1)
+                    scope.launch { pagerState.animateScrollToPage(page - 1) }
+                }
                 // Otherwise, finish the activity
                 else onBack()
             } catch (e: CancellationException) {

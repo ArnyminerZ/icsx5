@@ -187,7 +187,10 @@ class AddCalendarActivity : AppCompatActivity() {
                     scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
 
-                PagerPredictiveBackHandler(pagerState) { finish() }
+                PagerPredictiveBackHandler(
+                    pagerState,
+                    onPageChanged = { validationModel.result.postValue(null) }
+                ) { finish() }
 
                 Scaffold(
                     topBar = { TopAppBar(pagerState, showNextButton, isVerifyingUrl, isCreating) }
