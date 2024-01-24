@@ -1,6 +1,5 @@
 package at.bitfire.icsdroid.ui
 
-import android.util.Log
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.scrollBy
@@ -44,18 +43,15 @@ fun PagerPredictiveBackHandler(
         enabled = enabled,
         onBack = { progress ->
             // code for gesture back started
-            Log.i("PagerPredictiveBack", "Started back gesture")
             try {
                 progress.collect { event ->
                     // -- code for progress --
                     // ignore gesture for first page
                     if (pagerState.settledPage < 1) return@collect
-                    Log.v("PagerPredictiveBack", "progress=${event.progress}, lastProgress=$lastProgress")
                     // obtain the difference between the last updated progress and the current one
                     val delta = lastProgress - event.progress
                     // convert the progress into pixels
                     val deltaPx = delta * screenWidth
-                    Log.v("PagerPredictiveBack", "delta=$delta, deltaPx=$deltaPx")
                     // scroll the calculated amount of pixels
                     pagerState.scrollBy(deltaPx)
                     // store the current progress for the next update
@@ -63,7 +59,6 @@ fun PagerPredictiveBackHandler(
                 }
 
                 // -- code for completion --
-                Log.i("PagerPredictiveBack", "Finished back gesture")
                 lastProgress = 0f
                 val page = pagerState.settledPage
                 // If not on the first page, animate pager to the previous one
@@ -75,7 +70,6 @@ fun PagerPredictiveBackHandler(
                 else onBack()
             } catch (e: CancellationException) {
                 // -- code for cancellation --
-                Log.i("PagerPredictiveBack", "Cancelled back gesture")
                 lastProgress = 0f
                 scope.launch { pagerState.animateScrollToPage(pagerState.settledPage) }
             }
