@@ -1,0 +1,29 @@
+name: Detekt
+
+on: [ pull_request ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detekt:
+    name: Check Code Quality
+    runs-on: ubuntu-latest
+
+    permissions: write-all
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.head_ref }}
+
+      - name: detekt
+        uses: alaegin/Detekt-Action@v1.23.4
+        with:
+          reviewdog_reporter: github-pr-review
+          github_token: ${{ secrets.github_token }}
+          detekt_config: config/detekt/detekt.yml
+          detekt_excludes: '**/build/**,**/.idea/**'
