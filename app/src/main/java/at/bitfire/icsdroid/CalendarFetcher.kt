@@ -48,8 +48,13 @@ open class CalendarFetcher(
             fetchLocal()
     }
 
-    open fun onSuccess(data: InputStream, contentType: MediaType?, eTag: String?, lastModified: Long?, displayName: String?) {
-    }
+    open fun onSuccess(
+        data: InputStream,
+        contentType: MediaType?,
+        eTag: String?,
+        lastModified: Long?,
+        displayName: String?
+    ) {}
 
     open fun onNotModified() {
     }
@@ -101,7 +106,11 @@ open class CalendarFetcher(
             // We could check LAST_MODIFIED from the DocumentProvider here, but it's not clear whether it's reliable enough
             var displayName: String? = null
             contentResolver.query(
-                uri, arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_LAST_MODIFIED),
+                uri,
+                arrayOf(
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_LAST_MODIFIED
+                ),
                 null, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
                     displayName = cursor.getString(0)
@@ -113,10 +122,10 @@ open class CalendarFetcher(
             contentResolver.openInputStream(uri)?.use { inputStream ->
                 onSuccess(inputStream, null, null, null, displayName)
             }
-        } catch (e: FileNotFoundException) {
+        } catch (_: FileNotFoundException) {
             // file not there (anymore)
             onError(IOException(context.getString(R.string.could_not_open_storage_file)))
-        } catch (e: SecurityException) {
+        } catch (_: SecurityException) {
             // no access to file (anymore)
             onError(IOException(context.getString(R.string.could_not_open_storage_file)))
         } catch (e: Exception) {

@@ -22,12 +22,18 @@ object UriUtils {
      * @return true on success, false if the Intent could not be resolved (for instance, because
      * there is no user agent installed)
      */
-    fun launchUri(context: Context, uri: Uri, action: String = Intent.ACTION_VIEW, toastInstallBrowser: Boolean = true): Boolean {
+    @Deprecated("Links should be launched using the UriHandler of Compose.")
+    fun launchUri(
+        context: Context,
+        uri: Uri,
+        action: String = Intent.ACTION_VIEW,
+        toastInstallBrowser: Boolean = true
+    ): Boolean {
         val intent = Intent(action, uri)
         try {
             context.startActivity(intent)
             return true
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             // no browser available
         }
 

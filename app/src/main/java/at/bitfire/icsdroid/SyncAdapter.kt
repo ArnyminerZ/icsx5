@@ -5,7 +5,11 @@
 package at.bitfire.icsdroid
 
 import android.accounts.Account
-import android.content.*
+import android.content.AbstractThreadedSyncAdapter
+import android.content.ContentProviderClient
+import android.content.ContentResolver
+import android.content.Context
+import android.content.SyncResult
 import android.os.Bundle
 import androidx.work.WorkManager
 import at.bitfire.icsdroid.ui.NotificationUtils
@@ -14,7 +18,13 @@ class SyncAdapter(
     context: Context
 ): AbstractThreadedSyncAdapter(context, false) {
 
-    override fun onPerformSync(account: Account, extras: Bundle, authority: String, provider: ContentProviderClient, syncResult: SyncResult) {
+    override fun onPerformSync(
+        account: Account,
+        extras: Bundle,
+        authority: String,
+        provider: ContentProviderClient,
+        syncResult: SyncResult
+    ) {
         val manual = extras.containsKey(ContentResolver.SYNC_EXTRAS_MANUAL)
         SyncWorker.run(context, manual)
     }

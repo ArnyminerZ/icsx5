@@ -88,6 +88,7 @@ class AddCalendarActivity : AppCompatActivity() {
         }
 
 
+    @Suppress("CyclomaticComplexMethod")
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
 
@@ -124,11 +125,13 @@ class AddCalendarActivity : AppCompatActivity() {
 
                 val url: String? by subscriptionSettingsModel.url.observeAsState(null)
                 val urlError: String? by subscriptionSettingsModel.urlError.observeAsState(null)
+                @Suppress("MaxLineLength")
                 val supportsAuthentication: Boolean by subscriptionSettingsModel.supportsAuthentication.observeAsState(false)
                 val title by subscriptionSettingsModel.title.observeAsState(null)
                 val color by subscriptionSettingsModel.color.observeAsState(null)
                 val ignoreAlerts by subscriptionSettingsModel.ignoreAlerts.observeAsState(false)
                 val defaultAlarmMinutes by subscriptionSettingsModel.defaultAlarmMinutes.observeAsState(null)
+                @Suppress("MaxLineLength")
                 val defaultAllDayAlarmMinutes by subscriptionSettingsModel.defaultAllDayAlarmMinutes.observeAsState(null)
 
                 val requiresAuth: Boolean by credentialsModel.requiresAuth.observeAsState(false)

@@ -12,6 +12,7 @@ object Constants {
 
     const val TAG = "icsx5"
 
+    @Suppress("MaxLineLength")
     val USER_AGENT = "ICSx5/${BuildConfig.VERSION_NAME} (ical4j/${Ical4Android.ical4jVersion} okhttp/${OkHttp.VERSION} Android/${Build.VERSION.RELEASE})"
 
 }

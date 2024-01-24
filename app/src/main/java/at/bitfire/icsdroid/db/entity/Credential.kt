@@ -14,7 +14,12 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "credentials",
     foreignKeys = [
-        ForeignKey(entity = Subscription::class, parentColumns = ["id"], childColumns = ["subscriptionId"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(
+            entity = Subscription::class,
+            parentColumns = ["id"],
+            childColumns = ["subscriptionId"],
+            onDelete = ForeignKey.CASCADE
+        ),
     ]
 )
 data class Credential(

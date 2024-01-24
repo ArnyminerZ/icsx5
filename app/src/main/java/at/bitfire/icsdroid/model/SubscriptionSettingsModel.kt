@@ -25,7 +25,7 @@ class SubscriptionSettingsModel : ViewModel() {
         addSource(url) {
             val uri = try {
                 Uri.parse(it)
-            } catch (e: URISyntaxException) {
+            } catch (_: URISyntaxException) {
                 return@addSource
             } catch (_: NullPointerException) {
                 return@addSource
