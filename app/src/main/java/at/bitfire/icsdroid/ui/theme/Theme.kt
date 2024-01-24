@@ -124,7 +124,7 @@ fun ComponentActivity.setContentThemed(
     parent: CompositionContext? = null,
     darkTheme: @Composable () -> Boolean = {
         val forceDarkTheme by Settings(this).forceDarkModeLive().observeAsState()
-        forceDarkTheme == true && isSystemInDarkTheme()
+        forceDarkTheme == true || isSystemInDarkTheme()
     },
     content: @Composable () -> Unit
 ) {
