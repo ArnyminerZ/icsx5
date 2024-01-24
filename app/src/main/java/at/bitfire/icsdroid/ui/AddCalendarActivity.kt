@@ -51,7 +51,6 @@ import at.bitfire.icsdroid.model.CreateSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
 import at.bitfire.icsdroid.ui.theme.setContentThemed
-import com.google.accompanist.themeadapter.material.MdcTheme
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.net.URI

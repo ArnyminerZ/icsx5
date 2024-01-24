@@ -47,7 +47,6 @@ import at.bitfire.icsdroid.ui.dialog.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.list.CalendarListItem
 import at.bitfire.icsdroid.ui.reusable.ActionCard
 import at.bitfire.icsdroid.ui.theme.setContentThemed
-import com.google.accompanist.themeadapter.material.MdcTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*

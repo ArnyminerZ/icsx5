@@ -53,7 +53,6 @@ import at.bitfire.icsdroid.BuildConfig
 import at.bitfire.icsdroid.Constants
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.ui.theme.setContentThemed
-import com.google.accompanist.themeadapter.material.MdcTheme
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 
 class InfoActivity: ComponentActivity() {
