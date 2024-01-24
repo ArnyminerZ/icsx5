@@ -249,7 +249,6 @@ class EditCalendarActivity: AppCompatActivity() {
                             it.toLongOrNull()
                         )
                     },
-                    // TODO: Complete with some valid state
                     isCreating = false,
                     modifier = Modifier.fillMaxWidth()
                 )
