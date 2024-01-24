@@ -6,6 +6,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,11 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import at.bitfire.icsdroid.Settings
 
 private val LightColors = lightColors(
     primary = md_theme_light_primary,
@@ -118,7 +122,10 @@ fun AppTheme(
  */
 fun ComponentActivity.setContentThemed(
     parent: CompositionContext? = null,
-    darkTheme: @Composable () -> Boolean = { isSystemInDarkTheme() },
+    darkTheme: @Composable () -> Boolean = {
+        val forceDarkTheme by Settings(this).forceDarkModeLive().observeAsState()
+        forceDarkTheme == true && isSystemInDarkTheme()
+    },
     content: @Composable () -> Unit
 ) {
     setContent(parent) {
