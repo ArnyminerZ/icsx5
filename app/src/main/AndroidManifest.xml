@@ -42,7 +42,7 @@
         android:name=".MyApp"
         android:networkSecurityConfig="@xml/network_security"
         android:requestLegacyExternalStorage="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         android:enableOnBackInvokedCallback="true"
         tools:ignore="UnusedAttribute">
 
@@ -70,7 +70,6 @@
 
         <activity
             android:name=".ui.CalendarListActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,7 +78,6 @@
         </activity>
         <activity
             android:name=".ui.AddCalendarActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".ui.CalendarListActivity"
             android:exported="true"
             tools:ignore="UnusedAttribute">
@@ -118,7 +116,6 @@
         </activity>
         <activity
             android:name=".ui.EditCalendarActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/activity_edit_calendar"
             android:parentActivityName=".ui.CalendarListActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
