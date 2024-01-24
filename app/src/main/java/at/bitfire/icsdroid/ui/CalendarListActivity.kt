@@ -93,12 +93,6 @@ class CalendarListActivity: AppCompatActivity() {
         if (requestPermissions && !PermissionUtils.haveCalendarPermissions(this))
             requestCalendarPermissions()
 
-        // startup fragments
-        if (savedInstanceState == null)
-            ServiceLoader
-                .load(StartupFragment::class.java)
-                .forEach { it.initialize(this) }
-
         setContent {
             MdcTheme {
                 Scaffold(
