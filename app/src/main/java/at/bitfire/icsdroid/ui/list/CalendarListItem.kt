@@ -70,7 +70,7 @@ fun CalendarListItem(
                     text = errorMessage,
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier.fillMaxWidth(),
-                    color = colorResource(R.color.redorange)
+                    color = MaterialTheme.colors.error
                 )
             }
         }
