@@ -10,24 +10,42 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.view.*
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,16 +58,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
-import at.bitfire.icsdroid.*
+import at.bitfire.icsdroid.AppAccount
+import at.bitfire.icsdroid.BuildConfig
+import at.bitfire.icsdroid.PermissionUtils
 import at.bitfire.icsdroid.R
+import at.bitfire.icsdroid.Settings
+import at.bitfire.icsdroid.SyncWorker
+import at.bitfire.icsdroid.UriUtils
 import at.bitfire.icsdroid.db.AppDatabase
+import at.bitfire.icsdroid.service.ComposableStartupService
+import at.bitfire.icsdroid.service.StartupService
 import at.bitfire.icsdroid.ui.dialog.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.list.CalendarListItem
 import at.bitfire.icsdroid.ui.reusable.ActionCard
 import com.google.accompanist.themeadapter.material.MdcTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.ServiceLoader
 
 @OptIn(ExperimentalFoundationApi::class)
 class CalendarListActivity: AppCompatActivity() {
@@ -93,14 +118,24 @@ class CalendarListActivity: AppCompatActivity() {
         if (requestPermissions && !PermissionUtils.haveCalendarPermissions(this))
             requestCalendarPermissions()
 
-        // startup fragments
-        if (savedInstanceState == null)
-            ServiceLoader
-                .load(StartupFragment::class.java)
-                .forEach { it.initialize(this) }
+        // Initialize all StartupServices when the activity is first created
+        if (savedInstanceState == null) {
+            ServiceLoader.load(StartupService::class.java).forEach { service ->
+                service.initialize(this)
+            }
+        }
+        // Collect all ComposableStartupServices
+        val compStartupServices = ServiceLoader.load(ComposableStartupService::class.java).map { service ->
+            service.also { if (savedInstanceState == null) it.initialize(this) }
+        }.also { Log.w("CLA", "Got ${it.size} ComposableStartupService") }
 
         setContent {
             MdcTheme {
+                compStartupServices.forEach { service ->
+                    val show: Boolean by service.shouldShow().observeAsState(false)
+                    if (show) service.Content()
+                }
+                
                 Scaffold(
                     floatingActionButton = {
                         FloatingActionButton(
