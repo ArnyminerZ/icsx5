@@ -127,7 +127,7 @@ class CalendarListActivity: AppCompatActivity() {
         // Collect all ComposableStartupServices
         val compStartupServices = ServiceLoader.load(ComposableStartupService::class.java).map { service ->
             service.also { if (savedInstanceState == null) it.initialize(this) }
-        }.also { Log.w("CLA", "Got ${it.size} ComposableStartupService") }
+        }
 
         setContent {
             MdcTheme {
