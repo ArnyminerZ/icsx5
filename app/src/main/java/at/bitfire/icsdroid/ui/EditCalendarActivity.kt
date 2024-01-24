@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,6 +51,7 @@ import at.bitfire.icsdroid.db.entity.Subscription
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
+import at.bitfire.icsdroid.ui.dialog.AlertDialogBox
 import at.bitfire.icsdroid.ui.dialog.AlertFragmentDialog
 import com.google.accompanist.themeadapter.material.MdcTheme
 
@@ -275,29 +277,29 @@ class EditCalendarActivity: AppCompatActivity() {
 
     @Composable
     private fun AppBarComposable(valid: Boolean, modelsDirty: Boolean) {
-        val openDeleteDialog = remember { mutableStateOf(false) }
-        AlertDialogBox(
-            isOpen = openDeleteDialog,
-            message = stringResource(R.string.edit_calendar_really_delete),
-            confirmButtonText = stringResource(R.string.edit_calendar_delete),
-            confirmButtonCallback = { onDelete() },
-            dismissButtonText = stringResource(R.string.edit_calendar_cancel)
-        )
-        val openSaveDismissDialog = remember { mutableStateOf(false) }
-        AlertDialogBox(
-            isOpen = openSaveDismissDialog,
-            message = stringResource(R.string.edit_calendar_unsaved_changes),
-            confirmButtonText = stringResource(R.string.edit_calendar_save),
-            confirmButtonCallback = { onSave() },
-            dismissButtonText = stringResource(R.string.edit_calendar_dismiss),
-            dismissButtonCallback = { finish() }
-        )
+        var openDeleteDialog by remember { mutableStateOf(false) }
+        if (openDeleteDialog)
+            AlertDialogBox(
+                message = stringResource(R.string.edit_calendar_really_delete),
+                confirmButtonText = stringResource(R.string.edit_calendar_delete),
+                confirmButtonCallback = { onDelete(); dismiss() },
+                dismissButtonText = stringResource(R.string.edit_calendar_cancel),
+                dismissButtonCallback = { dismiss() }
+            ) { openDeleteDialog = false }
+        var openSaveDismissDialog by remember { mutableStateOf(false) }
+            AlertDialogBox(
+                message = stringResource(R.string.edit_calendar_unsaved_changes),
+                confirmButtonText = stringResource(R.string.edit_calendar_save),
+                confirmButtonCallback = { onSave(); dismiss() },
+                dismissButtonText = stringResource(R.string.edit_calendar_dismiss),
+                dismissButtonCallback = { finish() }
+            ) { openSaveDismissDialog = false }
         TopAppBar(
             navigationIcon = {
                 IconButton(
                     onClick = {
                         if (modelsDirty)
-                            openSaveDismissDialog.value = true
+                            openSaveDismissDialog = true
                         else
                             finish()
                     }
@@ -313,7 +315,7 @@ class EditCalendarActivity: AppCompatActivity() {
                         stringResource(R.string.edit_calendar_send_url)
                     )
                 }
-                IconButton(onClick = { openDeleteDialog.value = true }) {
+                IconButton(onClick = { openDeleteDialog = true }) {
                     Icon(Icons.Filled.Delete, stringResource(R.string.edit_calendar_delete))
                 }
                 AnimatedVisibility(visible = valid && modelsDirty) {
@@ -323,34 +325,6 @@ class EditCalendarActivity: AppCompatActivity() {
                 }
             }
         )
-    }
-
-    @Composable
-    fun AlertDialogBox(
-        isOpen: MutableState<Boolean>,
-        message: String,
-        confirmButtonText: String,
-        confirmButtonCallback: () -> Unit = {},
-        dismissButtonText: String,
-        dismissButtonCallback: () -> Unit = {}
-    ) {
-        if (isOpen.value)
-            AlertDialog(
-                onDismissRequest = { isOpen.value = false },
-                text = { Text(message) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        isOpen.value = false
-                        confirmButtonCallback()
-                    }) { Text(confirmButtonText) }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        isOpen.value = false
-                        dismissButtonCallback()
-                    }) { Text(dismissButtonText) }
-                }
-            )
     }
 
     @Preview
