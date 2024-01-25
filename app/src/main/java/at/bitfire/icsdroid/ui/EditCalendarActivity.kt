@@ -287,6 +287,7 @@ class EditCalendarActivity: AppCompatActivity() {
                 dismissButtonCallback = { dismiss() }
             ) { openDeleteDialog = false }
         var openSaveDismissDialog by remember { mutableStateOf(false) }
+        if (openSaveDismissDialog)
             AlertDialogBox(
                 message = stringResource(R.string.edit_calendar_unsaved_changes),
                 confirmButtonText = stringResource(R.string.edit_calendar_save),
