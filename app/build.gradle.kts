@@ -105,7 +105,7 @@ configurations {
 
 dependencies {
     val aboutLibsVersion: String by rootProject.extra
-    val composeBomVersion = "2023.10.01"   // https://developer.android.com/jetpack/compose/bom
+    val composeBomVersion = "2024.01.00"   // https://developer.android.com/jetpack/compose/bom
     val room = "2.6.1"
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -133,7 +133,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
     implementation("com.google.accompanist:accompanist-themeadapter-material:0.34.0")
     implementation("io.github.vanpra.compose-material-dialogs:color:0.9.0")
 
