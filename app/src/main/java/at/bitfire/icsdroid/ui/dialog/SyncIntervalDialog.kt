@@ -39,8 +39,8 @@ fun SyncIntervalDialog(
 
     GenericAlertDialog(
         title = stringResource(R.string.set_sync_interval_title),
-        confirmButton = stringResource(android.R.string.ok) to { dismiss() },
-        dismissButton = stringResource(android.R.string.cancel) to { dismiss() },
+        confirmButton = stringResource(android.R.string.ok) to onDismiss,
+        dismissButton = stringResource(android.R.string.cancel) to onDismiss,
         onDismissRequest = onDismiss,
         content = {
             LazyColumn {

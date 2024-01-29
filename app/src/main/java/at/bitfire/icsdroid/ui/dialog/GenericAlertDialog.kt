@@ -6,17 +6,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 
 /**
- * Provided by [GenericAlertDialog], gives access to some interactions from inside the composables
- * and callbacks.
- */
-interface AlertDialogContext {
-    /**
-     * Calls the `onDismissRequest` method of the dialog.
-     */
-    fun dismiss()
-}
-
-/**
  * Provides a generic [AlertDialog] with some utilities.
  * @param confirmButton The first argument is the text of the button, the second one the callback.
  * @param dismissButton The first argument is the text of the button, the second one the callback.
@@ -26,33 +15,27 @@ interface AlertDialogContext {
  */
 @Composable
 fun GenericAlertDialog(
-    confirmButton: Pair<String, AlertDialogContext.() -> Unit>,
-    dismissButton: Pair<String, AlertDialogContext.() -> Unit>? = null,
+    confirmButton: Pair<String, () -> Unit>,
+    dismissButton: Pair<String, () -> Unit>? = null,
     title: String? = null,
-    content: (@Composable AlertDialogContext.() -> Unit)? = null,
+    content: (@Composable () -> Unit)? = null,
     onDismissRequest: () -> Unit
 ) {
-    val context = object : AlertDialogContext {
-        override fun dismiss() = onDismissRequest()
-    }
-
     AlertDialog(
         onDismissRequest = onDismissRequest,
         // FIXME : I don't love this syntax, but I'm not sure if there's a cleaner way...
         title = title?.let {
             { Text(it) }
         },
-        text = content?.let {
-            { it(context) }
-        },
+        text = content,
         dismissButton = dismissButton?.let { (text, onClick) ->
             {
-                TextButton(onClick = { onClick(context) }) { Text(text) }
+                TextButton(onClick = { onClick() }) { Text(text) }
             }
         },
         confirmButton = {
             val (text, onClick) = confirmButton
-            TextButton(onClick = { onClick(context) }) { Text(text) }
+            TextButton(onClick = { onClick() }) { Text(text) }
         }
     )
 }

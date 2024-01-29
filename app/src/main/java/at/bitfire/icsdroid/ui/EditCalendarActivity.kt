@@ -281,15 +281,23 @@ class EditCalendarActivity: AppCompatActivity() {
         if (openDeleteDialog)
             GenericAlertDialog(
                 content = { Text(stringResource(R.string.edit_calendar_really_delete)) },
-                confirmButton = stringResource(R.string.edit_calendar_delete) to { onDelete(); dismiss() },
-                dismissButton = stringResource(R.string.edit_calendar_cancel) to { dismiss() },
+                confirmButton = stringResource(R.string.edit_calendar_delete) to {
+                    onDelete()
+                    openDeleteDialog = false
+                },
+                dismissButton = stringResource(R.string.edit_calendar_cancel) to {
+                    openDeleteDialog = false
+                                                                                 },
             ) { openDeleteDialog = false }
         var openSaveDismissDialog by remember { mutableStateOf(false) }
         if (openSaveDismissDialog)
             GenericAlertDialog(
                 content = { Text(text = stringResource(R.string.edit_calendar_unsaved_changes)) },
-                confirmButton = stringResource(R.string.edit_calendar_save) to { onSave(); dismiss() },
-                dismissButton = stringResource(R.string.edit_calendar_dismiss) to { finish() }
+                confirmButton = stringResource(R.string.edit_calendar_save) to {
+                    onSave()
+                    openSaveDismissDialog = false
+                },
+                dismissButton = stringResource(R.string.edit_calendar_dismiss) to ::finish
             ) { openSaveDismissDialog = false }
         TopAppBar(
             navigationIcon = {
