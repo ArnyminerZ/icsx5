@@ -51,8 +51,8 @@ import at.bitfire.icsdroid.db.entity.Subscription
 import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
-import at.bitfire.icsdroid.ui.dialog.AlertDialogBox
 import at.bitfire.icsdroid.ui.dialog.AlertFragmentDialog
+import at.bitfire.icsdroid.ui.dialog.GenericAlertDialog
 import com.google.accompanist.themeadapter.material.MdcTheme
 
 class EditCalendarActivity: AppCompatActivity() {
@@ -279,21 +279,17 @@ class EditCalendarActivity: AppCompatActivity() {
     private fun AppBarComposable(valid: Boolean, modelsDirty: Boolean) {
         var openDeleteDialog by remember { mutableStateOf(false) }
         if (openDeleteDialog)
-            AlertDialogBox(
-                message = stringResource(R.string.edit_calendar_really_delete),
-                confirmButtonText = stringResource(R.string.edit_calendar_delete),
-                confirmButtonCallback = { onDelete(); dismiss() },
-                dismissButtonText = stringResource(R.string.edit_calendar_cancel),
-                dismissButtonCallback = { dismiss() }
+            GenericAlertDialog(
+                content = { Text(stringResource(R.string.edit_calendar_really_delete)) },
+                confirmButton = stringResource(R.string.edit_calendar_delete) to { onDelete(); dismiss() },
+                dismissButton = stringResource(R.string.edit_calendar_cancel) to { dismiss() },
             ) { openDeleteDialog = false }
         var openSaveDismissDialog by remember { mutableStateOf(false) }
         if (openSaveDismissDialog)
-            AlertDialogBox(
-                message = stringResource(R.string.edit_calendar_unsaved_changes),
-                confirmButtonText = stringResource(R.string.edit_calendar_save),
-                confirmButtonCallback = { onSave(); dismiss() },
-                dismissButtonText = stringResource(R.string.edit_calendar_dismiss),
-                dismissButtonCallback = { finish() }
+            GenericAlertDialog(
+                content = { Text(text = stringResource(R.string.edit_calendar_unsaved_changes)) },
+                confirmButton = stringResource(R.string.edit_calendar_save) to { onSave(); dismiss() },
+                dismissButton = stringResource(R.string.edit_calendar_dismiss) to { finish() }
             ) { openSaveDismissDialog = false }
         TopAppBar(
             navigationIcon = {
