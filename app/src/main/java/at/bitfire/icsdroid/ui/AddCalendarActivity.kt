@@ -91,11 +91,6 @@ class AddCalendarActivity : AppCompatActivity() {
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
 
-        validationModel.result.observe(this) { info ->
-            Log.w(Constants.TAG, "Validation result updated!")
-            Log.w(Constants.TAG, "$info")
-        }
-
         if (inState == null) {
             intent?.apply {
                 data?.let { uri ->
