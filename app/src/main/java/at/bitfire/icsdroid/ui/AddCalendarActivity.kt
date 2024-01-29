@@ -124,7 +124,6 @@ class AddCalendarActivity : AppCompatActivity() {
 
         setContent {
             MdcTheme {
-                val scope = rememberCoroutineScope()
                 val pagerState = rememberPagerState { 2 }
 
                 val url: String? by subscriptionSettingsModel.url.observeAsState(null)
@@ -189,7 +188,7 @@ class AddCalendarActivity : AppCompatActivity() {
                         subscriptionSettingsModel.title.value =
                             info.calendarName ?: info.uri.toString()
 
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
                 }
 
                 Scaffold(
