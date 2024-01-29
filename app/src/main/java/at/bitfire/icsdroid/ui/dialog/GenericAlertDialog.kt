@@ -23,7 +23,6 @@ fun GenericAlertDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        // FIXME : I don't love this syntax, but I'm not sure if there's a cleaner way...
         title = title?.let {
             { Text(it) }
         },
