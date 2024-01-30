@@ -10,24 +10,41 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.view.*
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,8 +57,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
-import at.bitfire.icsdroid.*
+import at.bitfire.icsdroid.AppAccount
+import at.bitfire.icsdroid.BuildConfig
+import at.bitfire.icsdroid.PermissionUtils
 import at.bitfire.icsdroid.R
+import at.bitfire.icsdroid.Settings
+import at.bitfire.icsdroid.SyncWorker
+import at.bitfire.icsdroid.UriUtils
 import at.bitfire.icsdroid.db.AppDatabase
 import at.bitfire.icsdroid.ui.dialog.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.list.CalendarListItem
@@ -49,7 +71,7 @@ import at.bitfire.icsdroid.ui.reusable.ActionCard
 import com.google.accompanist.themeadapter.material.MdcTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.ServiceLoader
 
 @OptIn(ExperimentalFoundationApi::class)
 class CalendarListActivity: AppCompatActivity() {
@@ -61,6 +83,11 @@ class CalendarListActivity: AppCompatActivity() {
         const val EXTRA_REQUEST_CALENDAR_PERMISSION = "permission"
 
         const val PRIVACY_POLICY_URL = "https://icsx5.bitfire.at/privacy/"
+
+        /**
+         * The amount of seconds in a day.
+         */
+        private const val ONE_DAY_SECONDS = 1000L * 60 * 60 * 24
     }
 
     private val model by viewModels<SubscriptionsModel>()
@@ -140,8 +167,8 @@ class CalendarListActivity: AppCompatActivity() {
 
     /* UI components */
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
+    @OptIn(ExperimentalMaterialApi::class)
     fun ActivityContent(paddingValues: PaddingValues) {
         val context = LocalContext.current
 
@@ -202,7 +229,10 @@ class CalendarListActivity: AppCompatActivity() {
                     item(key = "battery-whitelisting") {
                         ActionCard(
                             title = stringResource(R.string.calendar_list_battery_whitelist_title),
-                            message = stringResource(R.string.calendar_list_battery_whitelist_text, stringResource(R.string.app_name)),
+                            message = stringResource(
+                                R.string.calendar_list_battery_whitelist_text,
+                                stringResource(R.string.app_name)
+                            ),
                             actionText = stringResource(R.string.calendar_list_battery_whitelist_open_settings),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -372,21 +402,23 @@ class CalendarListActivity: AppCompatActivity() {
             val haveCalendarPermission = PermissionUtils.haveCalendarPermissions(getApplication())
             askForCalendarPermission.postValue(!haveCalendarPermission)
 
-            val shouldWhitelistApp = if (Build.VERSION.SDK_INT >= 23) {
+            val shouldWhitelistApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val powerManager = getApplication<Application>().getSystemService<PowerManager>()
-                val isIgnoringBatteryOptimizations = powerManager?.isIgnoringBatteryOptimizations(BuildConfig.APPLICATION_ID)
+                val isIgnoringBatteryOptimizations = powerManager?.isIgnoringBatteryOptimizations(
+                    BuildConfig.APPLICATION_ID
+                )
 
                 val syncInterval = AppAccount.syncInterval(getApplication())
 
                 // If not ignoring battery optimizations, and sync interval is less than a day
-                isIgnoringBatteryOptimizations == false && syncInterval != AppAccount.SYNC_INTERVAL_MANUALLY && syncInterval < 86400
+                isIgnoringBatteryOptimizations == false &&
+                    syncInterval != AppAccount.SYNC_INTERVAL_MANUALLY &&
+                    syncInterval < ONE_DAY_SECONDS
             } else {
                 // If using Android < 6, this is not necessary
                 false
             }
             askForWhitelisting.postValue(shouldWhitelistApp)
         }
-
     }
-
 }

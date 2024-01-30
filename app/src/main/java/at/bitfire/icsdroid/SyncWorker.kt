@@ -8,7 +8,14 @@ import android.content.ContentProviderClient
 import android.content.ContentUris
 import android.content.Context
 import android.util.Log
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import at.bitfire.ical4android.AndroidCalendar
 import at.bitfire.ical4android.util.MiscUtils.closeCompat
 import at.bitfire.icsdroid.Constants.TAG
@@ -66,17 +73,19 @@ class SyncWorker(
                 ExistingWorkPolicy.REPLACE
             } else {
                 // regular sync, requires network
-                request.setConstraints(Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build())
+                request.setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
 
                 // don't overwrite previous syncs (whether regular or manual)
                 ExistingWorkPolicy.KEEP
             }
 
             WorkManager.getInstance(context)
-                    .beginUniqueWork(NAME, policy, request.build())
-                    .enqueue()
+                .beginUniqueWork(NAME, policy, request.build())
+                .enqueue()
         }
 
         fun liveStatus(context: Context) =
@@ -101,7 +110,7 @@ class SyncWorker(
         provider =
             try {
                 LocalCalendar.getCalendarProvider(applicationContext)
-            } catch (e: SecurityException) {
+            } catch (_: SecurityException) {
                 NotificationUtils.showCalendarPermissionNotification(applicationContext)
                 return Result.failure()
             }

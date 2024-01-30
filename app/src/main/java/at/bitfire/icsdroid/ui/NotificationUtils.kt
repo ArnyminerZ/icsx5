@@ -30,7 +30,7 @@ object NotificationUtils {
     fun createChannels(context: Context): NotificationManager {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nm.createNotificationChannel(NotificationChannel(CHANNEL_SYNC,
                     context.getString(R.string.notification_channel_sync_problem), NotificationManager.IMPORTANCE_LOW))
         }
@@ -52,7 +52,14 @@ object NotificationUtils {
             .setContentTitle(context.getString(R.string.sync_permission_required))
             .setContentText(context.getString(R.string.sync_permission_required_sync_calendar))
             .setCategory(NotificationCompat.CATEGORY_ERROR)
-            .setContentIntent(PendingIntent.getActivity(context, 0, askPermissionsIntent, PendingIntent.FLAG_UPDATE_CURRENT + flagImmutableCompat))
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    askPermissionsIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT + flagImmutableCompat
+                )
+            )
             .setAutoCancel(true)
             .setLocalOnly(true)
             .build()

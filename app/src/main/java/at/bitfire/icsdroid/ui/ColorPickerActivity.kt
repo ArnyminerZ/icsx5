@@ -20,11 +20,20 @@ class ColorPickerActivity: AppCompatActivity(), ColorPickerDialogListener {
     }
 
     class Contract: ActivityResultContract<Int?, Int>() {
-        override fun createIntent(context: Context, input: Int?): Intent = Intent(context, ColorPickerActivity::class.java).apply {
+        override fun createIntent(
+            context: Context,
+            input: Int?
+        ): Intent = Intent(context, ColorPickerActivity::class.java).apply {
             putExtra(EXTRA_COLOR, input)
         }
 
-        override fun parseResult(resultCode: Int, intent: Intent?): Int = intent?.getIntExtra(EXTRA_COLOR, LocalCalendar.DEFAULT_COLOR) ?: LocalCalendar.DEFAULT_COLOR
+        override fun parseResult(
+            resultCode: Int,
+            intent: Intent?
+        ): Int = intent?.getIntExtra(
+            EXTRA_COLOR,
+            LocalCalendar.DEFAULT_COLOR
+        ) ?: LocalCalendar.DEFAULT_COLOR
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

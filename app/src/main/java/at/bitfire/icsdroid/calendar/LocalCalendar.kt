@@ -137,7 +137,12 @@ class LocalCalendar private constructor(
                     val eventId = row.getLong(0)
                     val syncId = row.getString(1)
                     if (!uids.contains(syncId)) {
-                        provider.delete(ContentUris.withAppendedId(Events.CONTENT_URI, eventId).asSyncAdapter(account), null, null)
+                        provider.delete(
+                            ContentUris.withAppendedId(Events.CONTENT_URI, eventId)
+                                .asSyncAdapter(account),
+                            null,
+                            null
+                        )
                         deleted++
 
                         uids -= syncId
@@ -145,7 +150,7 @@ class LocalCalendar private constructor(
                 }
             }
             return deleted
-        } catch (e: RemoteException) {
+        } catch (_: RemoteException) {
             throw CalendarStorageException("Couldn't delete local events")
         }
     }

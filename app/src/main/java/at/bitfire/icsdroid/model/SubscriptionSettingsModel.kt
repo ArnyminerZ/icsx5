@@ -1,3 +1,7 @@
+/***************************************************************************************************
+ * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
+ **************************************************************************************************/
+
 package at.bitfire.icsdroid.model
 
 import android.net.Uri
@@ -21,7 +25,7 @@ class SubscriptionSettingsModel : ViewModel() {
         addSource(url) {
             val uri = try {
                 Uri.parse(it)
-            } catch (e: URISyntaxException) {
+            } catch (_: URISyntaxException) {
                 return@addSource
             } catch (_: NullPointerException) {
                 return@addSource

@@ -77,7 +77,7 @@ class InfoActivity: ComponentActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
             startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toast.makeText(this, getString(R.string.no_browser), Toast.LENGTH_LONG).show()
             Log.w(Constants.TAG, "No browser to view $uri")
         }

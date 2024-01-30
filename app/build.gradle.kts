@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("com.mikepenz.aboutlibraries.plugin")
     id("com.google.devtools.ksp")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {

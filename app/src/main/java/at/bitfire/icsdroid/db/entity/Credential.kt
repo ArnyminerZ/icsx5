@@ -1,3 +1,7 @@
+/***************************************************************************************************
+ * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
+ **************************************************************************************************/
+
 package at.bitfire.icsdroid.db.entity
 
 import androidx.room.Entity
@@ -10,7 +14,12 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "credentials",
     foreignKeys = [
-        ForeignKey(entity = Subscription::class, parentColumns = ["id"], childColumns = ["subscriptionId"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(
+            entity = Subscription::class,
+            parentColumns = ["id"],
+            childColumns = ["subscriptionId"],
+            onDelete = ForeignKey.CASCADE
+        ),
     ]
 )
 data class Credential(

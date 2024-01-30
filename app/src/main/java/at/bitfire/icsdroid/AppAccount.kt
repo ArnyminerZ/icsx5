@@ -48,7 +48,7 @@ object AppAccount {
             return newAccount
         }
 
-        throw IllegalStateException("Couldn't create app account")
+        error("Couldn't create app account")
     }
 
 

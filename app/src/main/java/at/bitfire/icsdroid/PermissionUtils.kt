@@ -41,7 +41,10 @@ object PermissionUtils {
      */
     fun haveNotificationPermission(context: Context) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         else
             true
 
@@ -68,8 +71,14 @@ object PermissionUtils {
         val request = activity.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissionsResult ->
-            Log.i(Constants.TAG, "Requested permissions: ${permissions.asList()}, got permissions: $permissionsResult")
-            if (permissions.all { requestedPermission -> permissionsResult.getOrDefault(requestedPermission, null) == true })
+            Log.i(
+                Constants.TAG,
+                "Requested permissions: %s, got permissions: %s".format(
+                    permissions.asList().toString(),
+                    permissionsResult
+                )
+            )
+            if (permissions.all { permissionsResult.getOrDefault(it, null) == true })
                 // all permissions granted
                 onGranted()
             else {

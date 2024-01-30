@@ -68,7 +68,6 @@ class SubscriptionSettingsFragment : Fragment() {
                     defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
                     defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
                     defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) },
-                    // TODO: Complete with some valid state
                     isCreating = false,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -111,6 +110,7 @@ fun SubscriptionSettingsComposable(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
+                    @Suppress("MagicNumber")
                     Modifier.weight(5f)
                 ) {
                     Text(

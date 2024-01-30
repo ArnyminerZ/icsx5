@@ -1,8 +1,18 @@
+/***************************************************************************************************
+ * Copyright © All Contributors. See LICENSE and AUTHORS in the root directory for details.
+ **************************************************************************************************/
+
 package at.bitfire.icsdroid.db.dao
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Embedded
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.Update
 import at.bitfire.icsdroid.db.entity.Credential
 import at.bitfire.icsdroid.db.entity.Subscription
 
@@ -45,6 +55,7 @@ interface SubscriptionsDao {
     @Query("UPDATE subscriptions SET lastSync=:lastSync WHERE id=:id")
     fun updateStatusNotModified(id: Long, lastSync: Long = System.currentTimeMillis())
 
+    @Suppress("MaxLineLength")
     @Query("UPDATE subscriptions SET eTag=:eTag, lastModified=:lastModified, lastSync=:lastSync, errorMessage=null WHERE id=:id")
     fun updateStatusSuccess(id: Long, eTag: String?, lastModified: Long?, lastSync: Long = System.currentTimeMillis())
 
