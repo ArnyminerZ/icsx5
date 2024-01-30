@@ -182,8 +182,8 @@ class AddCalendarActivity : AppCompatActivity() {
                     subscriptionSettingsModel.title.value =
                         info.calendarName ?: info.uri.toString()
 
-                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-            }
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
 
             Scaffold(
                 topBar = { TopAppBar(pagerState, showNextButton, isVerifyingUrl, isCreating) }
@@ -273,7 +273,11 @@ class AddCalendarActivity : AppCompatActivity() {
                         // If first page, close activity
                         if (pagerState.currentPage <= 0) finish()
                         // otherwise, go back a page
-                        else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                        else scope.launch {
+                            // Needed for non-first-time validations to trigger following validation result updates
+                            validationModel.result.postValue(null)
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
                     }
                 ) {
                     Icon(Icons.Filled.ArrowBack, null)
