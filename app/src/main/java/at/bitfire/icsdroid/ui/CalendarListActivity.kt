@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -67,7 +66,6 @@ import at.bitfire.icsdroid.SyncWorker
 import at.bitfire.icsdroid.UriUtils
 import at.bitfire.icsdroid.db.AppDatabase
 import at.bitfire.icsdroid.service.ComposableStartupService
-import at.bitfire.icsdroid.service.StartupService
 import at.bitfire.icsdroid.ui.dialog.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.list.CalendarListItem
 import at.bitfire.icsdroid.ui.reusable.ActionCard
@@ -118,12 +116,6 @@ class CalendarListActivity: AppCompatActivity() {
         if (requestPermissions && !PermissionUtils.haveCalendarPermissions(this))
             requestCalendarPermissions()
 
-        // Initialize all StartupServices when the activity is first created
-        if (savedInstanceState == null) {
-            ServiceLoader.load(StartupService::class.java).forEach { service ->
-                service.initialize(this)
-            }
-        }
         // Collect all ComposableStartupServices
         val compStartupServices = ServiceLoader.load(ComposableStartupService::class.java).map { service ->
             service.also { if (savedInstanceState == null) it.initialize(this) }

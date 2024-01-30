@@ -4,14 +4,23 @@
 
 package at.bitfire.icsdroid.service
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.LiveData
 
 /**
+ * Used for interactions between flavors.
+ *
  * Provides the possibility to display some composable (intended for dialogs) if a given condition
  * is met.
  */
-interface ComposableStartupService: StartupService {
+interface ComposableStartupService {
+    /**
+     * Will be called every time the main activity is created.
+     * @param activity The calling activity
+     */
+    fun initialize(activity: AppCompatActivity)
+
     /**
      * Provides a stateful response to whether this composable should be shown or not.
      * @return A [LiveData] that can be observed, and will make [Content] visible when `true`.
