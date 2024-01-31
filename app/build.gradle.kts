@@ -112,7 +112,7 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("com.github.bitfireAT:cert4android:2bb3898")
-    implementation("com.github.bitfireAT:ical4android:cc21286")
+    implementation("com.github.bitfireAT:ical4android:1.0")
 
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.appcompat:appcompat:1.6.1")
