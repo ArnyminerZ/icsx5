@@ -105,14 +105,14 @@ configurations {
 
 dependencies {
     val aboutLibsVersion: String by rootProject.extra
-    val composeBomVersion = "2023.10.01"   // https://developer.android.com/jetpack/compose/bom
+    val composeBomVersion = "2024.01.00"   // https://developer.android.com/jetpack/compose/bom
     val room = "2.6.1"
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
-    implementation("com.github.bitfireAT:cert4android:3817e62d9f173d8f8b800d24769f42cb205f560e")
-    implementation("com.github.bitfireAT:ical4android:916f2228e8fb55d26dea171733feaf22d6e45594")
+    implementation("com.github.bitfireAT:cert4android:2bb3898")
+    implementation("com.github.bitfireAT:ical4android:cc21286")
 
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -133,8 +133,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
-    implementation("com.google.accompanist:accompanist-themeadapter-material:0.32.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+    implementation("com.google.accompanist:accompanist-themeadapter-material:0.34.0")
     implementation("io.github.vanpra.compose-material-dialogs:color:0.9.0")
 
     implementation("com.jaredrummler:colorpicker:1.1.0")
