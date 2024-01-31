@@ -55,20 +55,20 @@ class DonateDialogService: ComposableStartupService {
     }
 
     /**
-     * Observes the value of the preference with key [PREF_NEXT_REMINDER], and sets the value:
-     * ```kotlin
-     * value < System.currentTimeMillis()
-     * ```
+     * Whether [Content] should be displayed or not.
+     *
+     * Observes the value of the preference with key [PREF_NEXT_REMINDER] and sets its value to
+     * *true* if the preference value lies in the past, or *false* otherwise.
      */
     @Composable
     override fun shouldShow(): LiveData<Boolean> = remember { MutableLiveData(false) }.also {
         DisposableEffect(it) {
             val listener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                // Just receive updates to PREF_NEXT_REMINDER
+                // Receive updates only for PREF_NEXT_REMINDER
                 if (key != PREF_NEXT_REMINDER) return@OnSharedPreferenceChangeListener
-                // Get the value of the preference
-                val value = sharedPreferences.getLong(PREF_NEXT_REMINDER, 0)
-                it.postValue(value < System.currentTimeMillis())
+                // Get preference value, calculate livedata value and post it
+                val nextReminderTime = sharedPreferences.getLong(PREF_NEXT_REMINDER, 0)
+                it.postValue(nextReminderTime < System.currentTimeMillis())
             }
             preferences.registerOnSharedPreferenceChangeListener(listener)
             listener.onSharedPreferenceChanged(preferences, PREF_NEXT_REMINDER)
