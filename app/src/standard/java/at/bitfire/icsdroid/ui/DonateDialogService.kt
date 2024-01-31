@@ -7,9 +7,7 @@ package at.bitfire.icsdroid.ui
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -19,6 +17,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.service.ComposableStartupService
+import at.bitfire.icsdroid.ui.dialog.GenericAlertDialog
 
 class DonateDialogService: ComposableStartupService {
     companion object {
@@ -82,36 +81,25 @@ class DonateDialogService: ComposableStartupService {
     /**
      * Dismisses the dialog for the given amount of milliseconds by updating the preference.
      */
-    private fun dismissDialogForMillis(millis: Long) {
+    private fun dismissDialogForMillis(millis: Long) =
         preferences
             .edit()
             .putLong(PREF_NEXT_REMINDER, System.currentTimeMillis() + millis)
             .apply()
-    }
 
     @Composable
     override fun Content() {
         val uriHandler = LocalUriHandler.current
-
-        // TODO: Replace with AlertDialogBox when https://github.com/ArnyminerZ/icsx5/pull/67 is merged
-        AlertDialog(
+        GenericAlertDialog(
             onDismissRequest = { /* Cannot be dismissed */ },
-            title = { Text(stringResource(R.string.donate_title)) },
-            text = { Text(stringResource(R.string.donate_message)) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        dismissDialogForMillis(SHOW_EVERY_MILLIS_DONATE)
-                        uriHandler.openUri(DONATION_URI)
-                    }
-                ) { Text(stringResource(R.string.donate_now).uppercase()) }
+            title = stringResource(R.string.donate_title),
+            content = { Text(stringResource(R.string.donate_message)) },
+            confirmButton = Pair(stringResource(R.string.donate_now).uppercase()) {
+                dismissDialogForMillis(SHOW_EVERY_MILLIS_DONATE)
+                uriHandler.openUri(DONATION_URI)
             },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        dismissDialogForMillis(SHOW_EVERY_MILLIS_DISMISS)
-                    }
-                ) { Text(stringResource(R.string.donate_later).uppercase()) }
+            dismissButton = Pair(stringResource(R.string.donate_later).uppercase()) {
+                dismissDialogForMillis(SHOW_EVERY_MILLIS_DISMISS)
             }
         )
     }
