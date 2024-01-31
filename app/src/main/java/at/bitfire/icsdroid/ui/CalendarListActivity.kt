@@ -116,9 +116,9 @@ class CalendarListActivity: AppCompatActivity() {
         if (requestPermissions && !PermissionUtils.haveCalendarPermissions(this))
             requestCalendarPermissions()
 
-        // Collect all ComposableStartupServices
-        val compStartupServices = ServiceLoader.load(ComposableStartupService::class.java).map { service ->
-            service.also { if (savedInstanceState == null) it.initialize(this) }
+        // Init and collect all ComposableStartupServices
+        val compStartupServices = ServiceLoader.load(ComposableStartupService::class.java).onEach { service ->
+            if (savedInstanceState == null) service.initialize(this)
         }
 
         setContent {
@@ -161,7 +161,6 @@ class CalendarListActivity: AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         model.checkSyncSettings()
     }
 
