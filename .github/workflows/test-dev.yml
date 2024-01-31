@@ -12,16 +12,16 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/actions/setup-gradle@v3
 
       - name: Check
         run: ./gradlew app:lintStandardDebug app:testStandardDebugUnitTest
 
       - name: Archive results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-unit
           path: |
             app/build/outputs/lint*
             app/build/reports
@@ -40,7 +40,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v3
 
       - name: Enable KVM group perms
         run: |
@@ -80,8 +80,8 @@ jobs:
 
       - name: Archive results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-instrumented-${{ matrix.api-level }}
           path: |
             app/build/reports
