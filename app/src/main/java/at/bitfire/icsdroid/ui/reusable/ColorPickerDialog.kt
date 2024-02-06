@@ -9,8 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.calendar.LocalCalendar
@@ -30,9 +28,21 @@ fun ColorPickerDialog(
 ) {
     val templateColors = MultipleColors.ColorsInt(
         LocalCalendar.DEFAULT_COLOR,
-        Color.Red.toArgb(),
-        Color.Green.toArgb(),
-        Color.Yellow.toArgb(),
+        // 2014 Material Design colors (shade 700)
+        0xFFD32F2F.toInt(),
+        0xFFC2185B.toInt(),
+        0xFF7B1FA2.toInt(),
+        0xFF512DA8.toInt(),
+        0xFF303F9F.toInt(),
+        0xFF1976D2.toInt(),
+        0xFF0288D1.toInt(),
+        0xFF0097A7.toInt(),
+        0xFF00796B.toInt(),
+        0xFF388E3C.toInt(),
+        0xFF689F38.toInt(),
+        0xFFAFB42B.toInt(),
+        0xFFFBC02D.toInt(),
+        0xFFFFA000.toInt(),
     )
 
     var selectedColor by remember { mutableIntStateOf(initialColor) }
