@@ -9,8 +9,8 @@ androidx-lifecycle = "2.7.0"
 androidx-test-rules = "1.5.0"
 androidx-test-runner = "1.5.2"
 androidx-work = "2.9.0"
-bitfire-cert4android = "2bb3898"
-bitfire-ical4android = "cc21286"
+bitfire-cert4android = "f0964cb"
+bitfire-ical4android = "821ab3f"
 #noinspection GradleDependency
 commons-io = "2.6"
 #noinspection GradleDependency
