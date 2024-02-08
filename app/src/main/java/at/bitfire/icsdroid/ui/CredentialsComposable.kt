@@ -4,13 +4,10 @@
 
 package at.bitfire.icsdroid.ui
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -33,7 +30,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.ui.reusable.TextFieldErrorLabel
 
@@ -46,10 +42,10 @@ fun LoginCredentialsComposable(
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit
 ) {
-    val usernameError = if (requiresAuth && username.isNullOrBlank())
+    val usernameError = if (username?.isBlank() == true)
         stringResource(R.string.edit_calendar_need_username)
     else null
-    val passwordError = if (requiresAuth && password.isNullOrBlank())
+    val passwordError = if (username?.isBlank() == true)
         stringResource(R.string.edit_calendar_need_password)
     else null
     Column(
