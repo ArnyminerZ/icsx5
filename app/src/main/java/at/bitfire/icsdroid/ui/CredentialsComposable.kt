@@ -24,14 +24,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import at.bitfire.icsdroid.R
+import at.bitfire.icsdroid.ui.modifier.autofill
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginCredentialsComposable(
     requiresAuth: Boolean,
@@ -65,7 +69,9 @@ fun LoginCredentialsComposable(
                 label = { Text( stringResource(R.string.add_calendar_user_name)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .autofill(AutofillType.Username, onFill = onUsernameChange)
             )
             PasswordTextField(
                 password = password ?: "",
@@ -77,6 +83,7 @@ fun LoginCredentialsComposable(
 }
 
 @Composable
+@ExperimentalComposeUiApi
 fun PasswordTextField(
     password: String,
     labelText: String = "",
@@ -102,7 +109,9 @@ fun PasswordTextField(
                     Icon(Icons.Rounded.Visibility, stringResource(R.string.add_calendar_password_show))
             }
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .autofill(AutofillType.Password, onFill = onPasswordChange)
     )
 }
 
