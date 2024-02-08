@@ -4,10 +4,6 @@
 
 package at.bitfire.icsdroid.ui
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,58 +22,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Circle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import at.bitfire.icsdroid.R
-import at.bitfire.icsdroid.model.SubscriptionSettingsModel
+import at.bitfire.icsdroid.calendar.LocalCalendar
+import at.bitfire.icsdroid.ui.reusable.ColorPickerDialog
 import at.bitfire.icsdroid.ui.reusable.SwitchSetting
 import at.bitfire.icsdroid.ui.theme.setContentThemed
-
-class SubscriptionSettingsFragment : Fragment() {
-
-    private val model by activityViewModels<SubscriptionSettingsModel>()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, inState: Bundle?): View {
-        val colorPickerContract = registerForActivityResult(ColorPickerActivity.Contract()) { color ->
-            model.color.value = color
-        }
-        return ComposeView(requireActivity()).apply {
-            setContentThemed {
-                val url by model.url.observeAsState("")
-                val title by model.title.observeAsState("")
-                val color by model.color.observeAsState(0)
-                val ignoreAlerts by model.ignoreAlerts.observeAsState(false)
-                val defaultAlarmMinutes by model.defaultAlarmMinutes.observeAsState()
-                val defaultAllDayAlarmMinutes by model.defaultAllDayAlarmMinutes.observeAsState()
-                SubscriptionSettingsComposable(
-                    url = url,
-                    title = title,
-                    titleChanged = { model.title.postValue(it) },
-                    color = color,
-                    colorIconClicked = { colorPickerContract.launch(color) },
-                    ignoreAlerts = ignoreAlerts,
-                    ignoreAlertsChanged = { model.ignoreAlerts.postValue(it) },
-                    defaultAlarmMinutes = defaultAlarmMinutes,
-                    defaultAlarmMinutesChanged = { model.defaultAlarmMinutes.postValue(it.toLongOrNull()) },
-                    defaultAllDayAlarmMinutes = defaultAllDayAlarmMinutes,
-                    defaultAllDayAlarmMinutesChanged = { model.defaultAllDayAlarmMinutes.postValue(it.toLongOrNull()) },
-                    // TODO: Complete with some valid state
-                    isCreating = false,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-
-}
 
 @Composable
 fun SubscriptionSettingsComposable(
@@ -85,7 +43,7 @@ fun SubscriptionSettingsComposable(
     title: String?,
     titleChanged: (String) -> Unit,
     color: Int?,
-    colorIconClicked: () -> Unit,
+    colorChanged: (Int) -> Unit,
     ignoreAlerts: Boolean,
     ignoreAlertsChanged: (Boolean) -> Unit,
     defaultAlarmMinutes: Long?,
@@ -127,8 +85,9 @@ fun SubscriptionSettingsComposable(
                         enabled = !isCreating
                     )
                 }
+                var changeColorDialogOpen by remember { mutableStateOf(false) }
                 IconButton(
-                    onClick = colorIconClicked,
+                    onClick = { changeColorDialogOpen = true },
                     modifier = Modifier
                         .weight(1f)
                         .size(48.dp)
@@ -141,6 +100,13 @@ fun SubscriptionSettingsComposable(
                             .size(48.dp)
                     )
                 }
+                // Color picker dialog
+                if (changeColorDialogOpen)
+                    ColorPickerDialog(
+                        initialColor = color ?: LocalCalendar.DEFAULT_COLOR,
+                        onSelectColor = colorChanged,
+                        onDialogDismissed = { changeColorDialogOpen = false }
+                    )
             }
         }
 

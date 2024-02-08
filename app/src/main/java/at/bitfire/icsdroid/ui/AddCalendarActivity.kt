@@ -27,8 +27,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -84,12 +84,6 @@ class AddCalendarActivity : AppCompatActivity() {
             }
         }
 
-    private val colorPickerContract =
-        registerForActivityResult(ColorPickerActivity.Contract()) { color ->
-            subscriptionSettingsModel.color.value = color
-        }
-
-
     override fun onCreate(inState: Bundle?) {
         super.onCreate(inState)
 
@@ -116,7 +110,7 @@ class AddCalendarActivity : AppCompatActivity() {
             }
         }
         subscriptionModel.errorMessage.observe(this) { message ->
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            message?.let { Toast.makeText(this, it, Toast.LENGTH_LONG).show() }
         }
 
         setContentThemed {
@@ -220,7 +214,7 @@ class AddCalendarActivity : AppCompatActivity() {
                             title = title,
                             titleChanged = subscriptionSettingsModel.title::setValue,
                             color = color,
-                            colorIconClicked = { colorPickerContract.launch(color) },
+                            colorChanged = subscriptionSettingsModel.color::setValue,
                             ignoreAlerts = ignoreAlerts,
                             ignoreAlertsChanged = subscriptionSettingsModel.ignoreAlerts::setValue,
                             defaultAlarmMinutes = defaultAlarmMinutes,
@@ -280,7 +274,7 @@ class AddCalendarActivity : AppCompatActivity() {
                         }
                     }
                 ) {
-                    Icon(Icons.Filled.ArrowBack, null)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
                 }
             },
             title = { Text(text = stringResource(R.string.activity_add_calendar)) },
@@ -290,7 +284,7 @@ class AddCalendarActivity : AppCompatActivity() {
                         onClick = { onNextRequested(pagerState.currentPage) },
                         enabled = !isVerifyingUrl && !isCreating
                     ) {
-                        Icon(Icons.Filled.ArrowForward, null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, null)
                     }
                 }
             }

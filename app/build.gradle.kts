@@ -105,7 +105,7 @@ configurations {
 
 dependencies {
     val aboutLibsVersion: String by rootProject.extra
-    val composeBomVersion = "2024.01.00"   // https://developer.android.com/jetpack/compose/bom
+    val composeBomVersion = "2024.02.00"   // https://developer.android.com/jetpack/compose/bom
     val room = "2.6.1"
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
@@ -113,6 +113,9 @@ dependencies {
 
     implementation("com.github.bitfireAT:cert4android:2bb3898")
     implementation("com.github.bitfireAT:ical4android:cc21286")
+
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.1")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:color:1.2.1")
 
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -133,12 +136,13 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+    implementation("com.google.accompanist:accompanist-themeadapter-material:0.34.0")
     implementation("io.github.vanpra.compose-material-dialogs:color:0.9.0")
 
     implementation("com.jaredrummler:colorpicker:1.1.0")
     implementation("com.mikepenz:aboutlibraries-compose:${aboutLibsVersion}")
-    implementation("joda-time:joda-time:2.12.6")
+    implementation("joda-time:joda-time:2.12.7")
 
     val okHttpBom = platform("com.squareup.okhttp3:okhttp-bom:4.12.0")
     implementation(okHttpBom)
