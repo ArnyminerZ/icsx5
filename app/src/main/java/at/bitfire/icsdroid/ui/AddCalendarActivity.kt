@@ -114,7 +114,6 @@ class AddCalendarActivity : AppCompatActivity() {
         }
 
         setContentThemed {
-            val scope = rememberCoroutineScope()
             val pagerState = rememberPagerState { 2 }
 
             val url: String? by subscriptionSettingsModel.url.observeAsState(null)
