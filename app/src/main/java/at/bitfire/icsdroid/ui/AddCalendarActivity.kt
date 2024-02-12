@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -41,17 +40,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import at.bitfire.icsdroid.Constants
 import at.bitfire.icsdroid.HttpClient
 import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.calendar.LocalCalendar
-import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.CreateSubscriptionModel
+import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
-import at.bitfire.icsdroid.ui.theme.md_theme_light_primary
+import at.bitfire.icsdroid.ui.theme.colorPrimary
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -169,7 +167,7 @@ class AddCalendarActivity : AppCompatActivity() {
 
                 if (subscriptionSettingsModel.color.value == null)
                     subscriptionSettingsModel.color.value =
-                        info.calendarColor ?: md_theme_light_primary.toArgb()
+                        info.calendarColor ?: colorPrimary.toArgb()
 
                 if (subscriptionSettingsModel.title.value.isNullOrBlank())
                     subscriptionSettingsModel.title.value =

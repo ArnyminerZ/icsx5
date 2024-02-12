@@ -11,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.darkColors
@@ -59,12 +60,11 @@ fun AppTheme(
             (context as? AppCompatActivity)?.let { activity ->
                 val style = if (darkTheme)
                     SystemBarStyle.dark(
-                        md_theme_dark_primaryContainer.toArgb()
+                        actionBarDarkTheme.toArgb()
                     )
                 else
-                    SystemBarStyle.light(
-                        md_theme_light_surfaceTint.toArgb(),
-                        md_theme_light_onBackground.toArgb()
+                    SystemBarStyle.dark(
+                        colorPrimaryDark.toArgb()
                     )
                 activity.enableEdgeToEdge(
                     statusBarStyle = style,
@@ -76,7 +76,7 @@ fun AppTheme(
         Box(
             modifier = Modifier
                 // Required to make sure all paddings are correctly set
-                .safeDrawingPadding()
+                .systemBarsPadding()
                 .fillMaxSize()
         ) {
             content()
