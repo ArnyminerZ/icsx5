@@ -46,8 +46,8 @@ import at.bitfire.icsdroid.HttpClient
 import at.bitfire.icsdroid.HttpUtils
 import at.bitfire.icsdroid.R
 import at.bitfire.icsdroid.calendar.LocalCalendar
-import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.CreateSubscriptionModel
+import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
 import com.google.accompanist.themeadapter.material.MdcTheme
@@ -179,6 +179,11 @@ class AddCalendarActivity : AppCompatActivity() {
 
                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
                 }
+
+                PagerPredictiveBackHandler(
+                    pagerState,
+                    onPageChanged = { validationModel.result.postValue(null) }
+                ) { finish() }
 
                 Scaffold(
                     topBar = { TopAppBar(pagerState, showNextButton, isVerifyingUrl, isCreating) }
