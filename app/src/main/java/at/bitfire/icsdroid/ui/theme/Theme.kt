@@ -132,20 +132,3 @@ fun ComponentActivity.setContentThemed(
         }
     }
 }
-
-/**
- * Set the Jetpack Compose UI content for this view. Initial composition will occur when the view
- * becomes attached to a window or when `createComposition` is called, whichever comes first.
- *
- * Then, applies [AppTheme] to the UI.
- *
- * @param content A `@Composable` function declaring the UI contents
- */
-@Deprecated("Fragments should not be used")
-fun ComposeView.setContentThemed(content: @Composable () -> Unit) {
-    setContent {
-        AppTheme {
-            content()
-        }
-    }
-}
