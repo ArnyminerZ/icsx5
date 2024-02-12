@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ShareCompat
 import at.bitfire.icsdroid.R
-import at.bitfire.icsdroid.ui.theme.setContentThemed
 import java.io.PrintWriter
 import java.io.StringWriter
 
