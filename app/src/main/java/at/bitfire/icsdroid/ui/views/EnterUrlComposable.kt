@@ -17,7 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
@@ -99,7 +99,7 @@ fun EnterUrlComposable(
 
             Text(
                 text = stringResource(R.string.add_calendar_url_text),
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -124,15 +124,15 @@ fun EnterUrlComposable(
             AnimatedVisibility(visible = urlError != null) {
                 Text(
                     text = urlError ?: "",
-                    color = MaterialTheme.colors.error,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.caption
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
             Text(
                 text = stringResource(R.string.add_calendar_pick_file_text),
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
@@ -157,7 +157,7 @@ fun EnterUrlComposable(
 
                     Text(
                         text = stringResource(R.string.add_calendar_authentication_without_https_warning),
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

@@ -25,7 +25,7 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -147,8 +147,8 @@ class InfoActivity: ComponentActivity() {
             )
             Text(
                 text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onBackground
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = stringResource(
@@ -156,8 +156,8 @@ class InfoActivity: ComponentActivity() {
                     BuildConfig.VERSION_NAME,
                     BuildConfig.FLAVOR
                 ),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.alpha(ContentAlpha.medium)
             )
         }

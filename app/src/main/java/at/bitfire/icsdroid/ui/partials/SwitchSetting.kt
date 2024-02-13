@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +29,7 @@ fun SwitchSetting(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
             )
             Switch(
                 checked = checked,
@@ -39,7 +39,7 @@ fun SwitchSetting(
         Text(
             text = description,
             color = Color.Gray,
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }

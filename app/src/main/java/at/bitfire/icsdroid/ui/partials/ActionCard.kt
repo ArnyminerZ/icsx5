@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -36,14 +36,14 @@ fun ActionCard(
             Text(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = message,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.bodyLarge
             )
             TextButton(
                 onClick = onAction,

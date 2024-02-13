@@ -10,9 +10,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.LaunchedEffect
@@ -24,15 +24,15 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import at.bitfire.icsdroid.Settings
 
-private val LightColors = lightColors(
+private val LightColors = lightColorScheme(
     primary = colorPrimary,
-    secondary = colorSecondary,
+    tertiary = colorSecondary,
     onSecondary = Color.White
 )
 
-private val DarkColors = darkColors(
+private val DarkColors = darkColorScheme(
     primary = colorPrimaryDark,
-    secondary = colorSecondary,
+    tertiary = colorSecondary,
     onSecondary = Color.White
 )
 
@@ -43,14 +43,12 @@ fun AppTheme(
 ) {
     val context = LocalContext.current
 
-    val colors = if (darkTheme)
+    val colorScheme = if (darkTheme)
         DarkColors
     else
         LightColors
 
-    MaterialTheme(
-        colors = colors
-    ) {
+    MaterialTheme(colorScheme = colorScheme) {
         LaunchedEffect(darkTheme) {
             (context as? AppCompatActivity)?.let { activity ->
                 val style = if (darkTheme)

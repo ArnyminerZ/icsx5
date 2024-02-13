@@ -27,7 +27,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -242,7 +242,7 @@ class CalendarListActivity: AppCompatActivity() {
                     item(key = "empty") {
                         Text(
                             text = stringResource(R.string.calendar_list_empty_info),
-                            style = MaterialTheme.typography.body1,
+                            style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
