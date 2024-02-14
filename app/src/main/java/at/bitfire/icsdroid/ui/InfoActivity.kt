@@ -46,7 +46,7 @@ import androidx.core.text.HtmlCompat
 import at.bitfire.icsdroid.BuildConfig
 import at.bitfire.icsdroid.Constants
 import at.bitfire.icsdroid.R
-import at.bitfire.icsdroid.ui.dialog.GenericAlertDialog
+import at.bitfire.icsdroid.ui.partials.GenericAlertDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 
