@@ -15,12 +15,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -299,51 +300,49 @@ class CalendarListActivity: AppCompatActivity() {
             onDismissRequest = { showMenu = false }
         ) {
             DropdownMenuItem(
+                text = { Text(stringResource(R.string.calendar_list_set_sync_interval)) },
                 onClick = {
                     showMenu = false
                     showSyncIntervalDialog = true
                 }
-            ) {
-                Text(stringResource(R.string.calendar_list_set_sync_interval))
-            }
+            )
             DropdownMenuItem(
+                text = { Text(stringResource(R.string.calendar_list_synchronize)) },
                 onClick = {
                     showMenu = false
                     onRefreshRequested()
                 }
-            ) {
-                Text(stringResource(R.string.calendar_list_synchronize))
-            }
+            )
             DropdownMenuItem(
+                text = {
+                    val forceDarkMode by settings.forceDarkModeLive().observeAsState(false)
+                    Row(verticalAlignment = Alignment.CenterVertically,) {
+                        Text(stringResource(R.string.settings_force_dark_theme))
+                        Checkbox(
+                            checked = forceDarkMode,
+                            onCheckedChange = { onToggleDarkMode() }
+                        )
+                    }
+                },
                 onClick =  {
                     showMenu = false
                     onToggleDarkMode()
                 }
-            ) {
-                val forceDarkMode by settings.forceDarkModeLive().observeAsState(false)
-
-                Text(stringResource(R.string.settings_force_dark_theme))
-                Checkbox(
-                    checked = forceDarkMode,
-                    onCheckedChange = { onToggleDarkMode() }
-                )
-            }
+            )
             DropdownMenuItem(
+                text = { Text(stringResource(R.string.calendar_list_privacy_policy)) },
                 onClick = {
                     showMenu = false
                     UriUtils.launchUri(context, Uri.parse(PRIVACY_POLICY_URL))
                 }
-            ) {
-                Text(stringResource(R.string.calendar_list_privacy_policy))
-            }
+            )
             DropdownMenuItem(
+                text = { Text(stringResource(R.string.calendar_list_info)) },
                 onClick = {
                     showMenu = false
                     startActivity(Intent(context, InfoActivity::class.java))
                 }
-            ) {
-                Text(stringResource(R.string.calendar_list_info))
-            }
+            )
         }
     }
 
