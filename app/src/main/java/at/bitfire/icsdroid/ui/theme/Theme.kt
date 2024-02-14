@@ -19,22 +19,42 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import at.bitfire.icsdroid.Settings
 
-private val LightColors = lightColorScheme(
-    primary = colorPrimary,
-    tertiary = colorSecondary,
-    onSecondary = Color.White
+private val DarkColors = darkColorScheme(
+    primary = lightblue,
+    onPrimary = offwhite,
+    primaryContainer = lightblue,
+    onPrimaryContainer = offwhite,
+    secondary = lightblue,
+    onSecondary = offwhite,
+    secondaryContainer = lightblue,
+    onSecondaryContainer = offwhite,
+    tertiary = lightblue,
+    onTertiary = offwhite,
+    tertiaryContainer = lightblue,
+    onTertiaryContainer = offwhite,
 )
 
-private val DarkColors = darkColorScheme(
-    primary = colorPrimaryDark,
-    tertiary = colorSecondary,
-    onSecondary = Color.White
+private val LightColors = lightColorScheme(
+    primary = lightblue,
+    onPrimary = offwhite,
+    primaryContainer = lightblue,
+    onPrimaryContainer = offwhite,
+    secondary = lightblue,
+    onSecondary = offwhite,
+    secondaryContainer = lightblue,
+    onSecondaryContainer = offwhite,
+    tertiary = lightblue,
+    onTertiary = offwhite,
+    tertiaryContainer = lightblue,
+    onTertiaryContainer = offwhite,
+    background = offwhite,
+    surfaceVariant = lightgrey,
 )
+
 
 @Composable
 fun AppTheme(
@@ -43,9 +63,9 @@ fun AppTheme(
 ) {
     val context = LocalContext.current
 
-    val colorScheme = if (darkTheme)
+    val colorScheme = if (darkTheme) {
         DarkColors
-    else
+    } else
         LightColors
 
     MaterialTheme(colorScheme = colorScheme) {
@@ -53,11 +73,11 @@ fun AppTheme(
             (context as? AppCompatActivity)?.let { activity ->
                 val style = if (darkTheme)
                     SystemBarStyle.dark(
-                        actionBarDarkTheme.toArgb()
+                        nearlyBlack.toArgb()
                     )
                 else
                     SystemBarStyle.dark(
-                        colorPrimaryDark.toArgb()
+                        darkblue.toArgb()
                     )
                 activity.enableEdgeToEdge(
                     statusBarStyle = style,

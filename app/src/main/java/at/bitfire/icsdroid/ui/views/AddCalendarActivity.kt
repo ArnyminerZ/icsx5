@@ -52,7 +52,7 @@ import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.model.ValidationModel
 import at.bitfire.icsdroid.ui.ResourceInfo
-import at.bitfire.icsdroid.ui.theme.colorPrimary
+import at.bitfire.icsdroid.ui.theme.lightblue
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -170,7 +170,7 @@ class AddCalendarActivity : AppCompatActivity() {
 
                 if (subscriptionSettingsModel.color.value == null)
                     subscriptionSettingsModel.color.value =
-                        info.calendarColor ?: colorPrimary.toArgb()
+                        info.calendarColor ?: lightblue.toArgb()
 
                 if (subscriptionSettingsModel.title.value.isNullOrBlank())
                     subscriptionSettingsModel.title.value =
