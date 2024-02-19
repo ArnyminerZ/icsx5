@@ -27,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +45,7 @@ import androidx.core.text.HtmlCompat
 import at.bitfire.icsdroid.BuildConfig
 import at.bitfire.icsdroid.Constants
 import at.bitfire.icsdroid.R
+import at.bitfire.icsdroid.ui.partials.ExtendedTopAppBar
 import at.bitfire.icsdroid.ui.partials.GenericAlertDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
@@ -85,7 +85,7 @@ class InfoActivity: ComponentActivity() {
     fun MainLayout() {
         Scaffold(
             topBar = {
-                TopAppBar(
+                ExtendedTopAppBar(
                     navigationIcon = {
                         IconButton({ onNavigateUp() }) {
                             Icon(

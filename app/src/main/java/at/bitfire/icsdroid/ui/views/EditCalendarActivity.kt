@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -49,6 +48,7 @@ import at.bitfire.icsdroid.model.CredentialsModel
 import at.bitfire.icsdroid.model.EditSubscriptionModel
 import at.bitfire.icsdroid.model.SubscriptionSettingsModel
 import at.bitfire.icsdroid.ui.partials.AlertDialog
+import at.bitfire.icsdroid.ui.partials.ExtendedTopAppBar
 import at.bitfire.icsdroid.ui.partials.GenericAlertDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 
@@ -303,7 +303,7 @@ class EditCalendarActivity: AppCompatActivity() {
                 dismissButton = stringResource(R.string.edit_calendar_dismiss) to ::finish
             ) { openSaveDismissDialog = false }
         }
-        TopAppBar(
+        ExtendedTopAppBar(
             navigationIcon = {
                 IconButton(
                     onClick = {

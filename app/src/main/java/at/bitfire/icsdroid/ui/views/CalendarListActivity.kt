@@ -38,7 +38,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -70,6 +69,7 @@ import at.bitfire.icsdroid.service.ComposableStartupService
 import at.bitfire.icsdroid.ui.InfoActivity
 import at.bitfire.icsdroid.ui.partials.ActionCard
 import at.bitfire.icsdroid.ui.partials.CalendarListItem
+import at.bitfire.icsdroid.ui.partials.ExtendedTopAppBar
 import at.bitfire.icsdroid.ui.partials.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import kotlinx.coroutines.Dispatchers
@@ -144,7 +144,7 @@ class CalendarListActivity: AppCompatActivity() {
                     }
                 },
                 topBar = {
-                    TopAppBar(
+                    ExtendedTopAppBar(
                         title = {
                             Text(stringResource(R.string.title_activity_calendar_list))
                         },
