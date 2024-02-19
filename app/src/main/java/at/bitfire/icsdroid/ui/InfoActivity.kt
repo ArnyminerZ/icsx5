@@ -49,6 +49,7 @@ import at.bitfire.icsdroid.ui.partials.ExtendedTopAppBar
 import at.bitfire.icsdroid.ui.partials.GenericAlertDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 
 class InfoActivity: ComponentActivity() {
 
@@ -119,7 +120,14 @@ class InfoActivity: ComponentActivity() {
             Column(Modifier.padding(contentPadding)) {
                 Header()
                 License()
-                LibrariesContainer()
+                LibrariesContainer(
+                    colors = LibraryDefaults.libraryColors(
+                        backgroundColor = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground,
+                        badgeBackgroundColor = MaterialTheme.colorScheme.primary,
+                        badgeContentColor = MaterialTheme.colorScheme.onPrimary,
+                    )
+                )
             }
         }
     }
