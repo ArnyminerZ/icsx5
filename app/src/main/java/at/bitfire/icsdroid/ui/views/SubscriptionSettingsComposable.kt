@@ -72,6 +72,7 @@ fun SubscriptionSettingsComposable(
                     Modifier.weight(5f)
                 ) {
                     Text(
+                        modifier = Modifier.padding(horizontal = 14.dp),
                         text = url ?: "",
                         color = Color.Gray,
                         style = MaterialTheme.typography.bodyMedium,
