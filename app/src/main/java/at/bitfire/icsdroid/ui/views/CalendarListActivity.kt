@@ -21,13 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +34,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +46,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +73,7 @@ import at.bitfire.icsdroid.ui.partials.ExtendedTopAppBar
 import at.bitfire.icsdroid.ui.partials.SyncIntervalDialog
 import at.bitfire.icsdroid.ui.theme.setContentThemed
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ServiceLoader
 
@@ -166,16 +167,21 @@ class CalendarListActivity: AppCompatActivity() {
 
     /* UI components */
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ActivityContent(paddingValues: PaddingValues) {
         val context = LocalContext.current
 
         val isRefreshing by model.isRefreshing.observeAsState(initial = true)
-        val pullRefreshState = rememberPullRefreshState(
-            refreshing = isRefreshing,
-            onRefresh = ::onRefreshRequested
-        )
+        val pullRefreshState = rememberPullToRefreshState()
+        if (pullRefreshState.isRefreshing) LaunchedEffect(true) {
+            onRefreshRequested()
+            pullRefreshState.endRefresh()
+        }
+        if (!isRefreshing) LaunchedEffect(true) {
+            delay(1000) // So we can see the spinner shortly, when sync finishes super fast
+            pullRefreshState.endRefresh()
+        }
 
         val subscriptions by model.subscriptions.observeAsState()
 
@@ -186,8 +192,12 @@ class CalendarListActivity: AppCompatActivity() {
         Box(
             modifier = Modifier
                 .padding(paddingValues)
-                .pullRefresh(pullRefreshState)
+                .nestedScroll(pullRefreshState.nestedScrollConnection)
         ) {
+            PullToRefreshContainer(
+                modifier = Modifier.align(Alignment.TopCenter),
+                state = pullRefreshState,
+            )
             LazyColumn(Modifier.fillMaxSize()) {
                 // Calendar permission card
                 if (askForCalendarPermission) {
@@ -263,12 +273,6 @@ class CalendarListActivity: AppCompatActivity() {
                     })
                 }
             }
-
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 
@@ -349,9 +353,7 @@ class CalendarListActivity: AppCompatActivity() {
 
     /* actions */
 
-    private fun onRefreshRequested() {
-        SyncWorker.run(this, true)
-    }
+    private fun onRefreshRequested() = SyncWorker.run(this, true)
 
     private fun onToggleDarkMode() {
         val settings = Settings(this)
