@@ -119,7 +119,6 @@ dependencies {
     implementation(libs.androidx.work.runtime)
 
     // Jetpack Compose
-    implementation(libs.compose.material)
     implementation(libs.compose.material3)
     implementation(libs.compose.materialIconsExtended)
     debugImplementation(libs.compose.ui.tooling)
