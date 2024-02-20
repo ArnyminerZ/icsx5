@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import at.bitfire.icsdroid.R
-import at.bitfire.icsdroid.ui.partials.TextFieldErrorLabel
 
 @Composable
 fun LoginCredentialsComposable(
@@ -70,20 +69,21 @@ fun LoginCredentialsComposable(
                 value = username ?: "",
                 onValueChange = onUsernameChange,
                 label = { Text(stringResource(R.string.add_calendar_user_name)) },
+                supportingText = { Text(usernameError ?: stringResource(R.string.required_annotation)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 isError = usernameError != null,
                 modifier = Modifier.fillMaxWidth()
             )
-            TextFieldErrorLabel(usernameError)
 
             PasswordTextField(
                 password = password ?: "",
                 labelText = stringResource(R.string.add_calendar_password),
+                supportingText = passwordError ?: stringResource(R.string.required_annotation),
                 isError = passwordError != null,
+                errorText = passwordError,
                 onPasswordChange = onPasswordChange
             )
-            TextFieldErrorLabel(passwordError)
         }
     }
 }
@@ -92,8 +92,10 @@ fun LoginCredentialsComposable(
 fun PasswordTextField(
     password: String,
     labelText: String = "",
+    supportingText: String = "",
     enabled: Boolean = true,
     isError: Boolean = false,
+    errorText: String? = null,
     onPasswordChange: (String) -> Unit
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
@@ -101,6 +103,7 @@ fun PasswordTextField(
         value = password,
         onValueChange = onPasswordChange,
         label = { Text(labelText) },
+        supportingText = { Text(errorText ?: supportingText) },
         isError = isError,
         singleLine = true,
         enabled = enabled,
