@@ -63,9 +63,9 @@ fun AppTheme(
 ) {
     val context = LocalContext.current
 
-    val colorScheme = if (darkTheme) {
+    val colorScheme = if (darkTheme)
         DarkColors
-    } else
+    else
         LightColors
 
     MaterialTheme(colorScheme = colorScheme) {
