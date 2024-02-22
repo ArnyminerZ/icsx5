@@ -173,13 +173,13 @@ class CalendarListActivity: AppCompatActivity() {
     fun ActivityContent(paddingValues: PaddingValues) {
         val context = LocalContext.current
 
-        val isRefreshing by model.isRefreshing.observeAsState(initial = true)
+        val syncing by model.isRefreshing.observeAsState(initial = true)
         val pullRefreshState = rememberPullToRefreshState()
         if (pullRefreshState.isRefreshing) LaunchedEffect(true) {
-            onRefreshRequested()
             pullRefreshState.startRefresh()
+            onRefreshRequested()
         }
-        if (!isRefreshing) LaunchedEffect(true) {
+        if (!syncing) LaunchedEffect(true) {
             delay(1000) // So we can see the spinner shortly, when sync finishes super fast
             pullRefreshState.endRefresh()
         }
@@ -198,6 +198,8 @@ class CalendarListActivity: AppCompatActivity() {
             PullToRefreshContainer(
                 modifier = Modifier.align(Alignment.TopCenter).zIndex(1f),
                 state = pullRefreshState,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
             LazyColumn(Modifier.fillMaxSize()) {
                 // Calendar permission card
