@@ -234,7 +234,7 @@ class CalendarListActivity: AppCompatActivity() {
                 }
 
                 // Whitelisting card
-                if (askForWhitelisting && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (askForWhitelisting) {
                     item(key = "battery-whitelisting") {
                         ActionCard(
                             title = stringResource(R.string.calendar_list_battery_whitelist_title),
