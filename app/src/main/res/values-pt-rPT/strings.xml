@@ -22,7 +22,7 @@
   <string name="add_calendar_title">Título e cor</string>
   <string name="add_calendar_title_hint">Nome de calendário</string>
   <string name="add_calendar_user_name">Nome de utilizador</string>
-  <string name="add_calendar_validating">A validar calendário...</string>
+  <string name="add_calendar_validating">A validar calendário…</string>
   <!--AlertDialog-->
   <!--EditCalendarActivity-->
   <string name="activity_edit_calendar">Editar subscrição</string>

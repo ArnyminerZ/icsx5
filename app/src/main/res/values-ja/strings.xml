@@ -32,14 +32,14 @@
   <string name="add_calendar_pick_file_text">ローカルストレージからファイルを選択することもできます</string>
   <string name="add_calendar_pick_file">ファイルを選択</string>
   <string name="add_calendar_user_name">ユーザー名</string>
-  <string name="add_calendar_validating">カレンダー情報を確認しています...</string>
+  <string name="add_calendar_validating">カレンダー情報を確認しています…</string>
   <string name="add_calendar_alarms_title">アラーム</string>
   <string name="add_calendar_alarms_ignore_title">カレンダーに埋め込まれた通知を無視</string>
   <string name="add_calendar_alarms_ignore_description">有効にすると、そのサーバーから送信されるすべてのアラームが無視されます</string>
     <string name="add_calendar_alarms_default_all_day_title">終日の予定にデフォルトのアラームを追加</string>
     <string name="default_alarm_dialog_title">デフォルトのアラームを追加</string>
   <string name="default_alarm_dialog_message">設定すると、すべての予定にアラームを追加します</string>
-  <string name="default_alarm_dialog_hint">予定の...分前</string>
+  <string name="default_alarm_dialog_hint">予定の…分前</string>
     <!--AlertDialog-->
   <string name="alert_share_details">詳細情報を共有</string>
   <!--EditCalendarActivity-->

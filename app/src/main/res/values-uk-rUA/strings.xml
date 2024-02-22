@@ -21,7 +21,7 @@
   <string name="add_calendar_title">Заголовок &amp; Колір</string>
   <string name="add_calendar_title_hint">Назва Календаря</string>
   <string name="add_calendar_user_name">Ім\'я користувача</string>
-  <string name="add_calendar_validating">Перевіряємо джерело календаря...</string>
+  <string name="add_calendar_validating">Перевіряємо джерело календаря…</string>
   <!--AlertDialog-->
   <!--EditCalendarActivity-->
   <string name="activity_edit_calendar">Правити підписку</string>

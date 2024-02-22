@@ -32,7 +32,7 @@
   <string name="add_calendar_pick_file_text">Или выберите файл из локального хранилища.</string>
   <string name="add_calendar_pick_file">Выбрать файл</string>
   <string name="add_calendar_user_name">Имя пользователя</string>
-  <string name="add_calendar_validating">Проверка доступности календаря...</string>
+  <string name="add_calendar_validating">Проверка доступности календаря…</string>
   <string name="add_calendar_alarms_title">Оповещения</string>
   <string name="add_calendar_alarms_ignore_title">Игнорировать оповещения, встроенные в календарь</string>
   <string name="add_calendar_alarms_ignore_description">Если включено, все входящие оповещения с сервера будут отклонены.</string>

@@ -26,7 +26,7 @@
   <string name="add_calendar_pick_file_text">Eller, vælg fil fra lokal lagerplads.</string>
   <string name="add_calendar_pick_file">Vælg fil</string>
   <string name="add_calendar_user_name">Brugernavn</string>
-  <string name="add_calendar_validating">Validerer kalenderkilden ...</string>
+  <string name="add_calendar_validating">Validerer kalenderkilden …</string>
   <!--AlertDialog-->
   <string name="alert_share_details">Del detaljer</string>
   <!--EditCalendarActivity-->
