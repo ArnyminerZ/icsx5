@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.content.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -195,7 +196,7 @@ class CalendarListActivity: AppCompatActivity() {
                 .nestedScroll(pullRefreshState.nestedScrollConnection)
         ) {
             PullToRefreshContainer(
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier.align(Alignment.TopCenter).zIndex(1f),
                 state = pullRefreshState,
             )
             LazyColumn(Modifier.fillMaxSize()) {
