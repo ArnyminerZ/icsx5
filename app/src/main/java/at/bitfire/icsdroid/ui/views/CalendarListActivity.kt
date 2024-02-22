@@ -176,7 +176,7 @@ class CalendarListActivity: AppCompatActivity() {
         val pullRefreshState = rememberPullToRefreshState()
         if (pullRefreshState.isRefreshing) LaunchedEffect(true) {
             onRefreshRequested()
-            pullRefreshState.endRefresh()
+            pullRefreshState.startRefresh()
         }
         if (!isRefreshing) LaunchedEffect(true) {
             delay(1000) // So we can see the spinner shortly, when sync finishes super fast
